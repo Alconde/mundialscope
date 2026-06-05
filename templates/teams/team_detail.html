@@ -74,6 +74,30 @@
     {% else %}
         <p>No hay informe disponible todavía para esta selección.</p>
     {% endif %}
+    {% if team_report.ai_headline or team_report.ai_summary %}
+    <section class="card standings-section">
+        <div class="section-header">
+            <h2>Lectura IA de la selección</h2>
+        </div>
+
+        <div class="report-block">
+            <div class="report-section">
+                <h4>{{ team_report.ai_headline }}</h4>
+                <p>{{ team_report.ai_summary|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Perfil táctico</h4>
+                <p>{{ team_report.ai_tactical_profile|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Alertas prioritarias</h4>
+                <p>{{ team_report.ai_priority_alerts|linebreaksbr }}</p>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 </section>
 <section class="content-grid team-detail-grid">
     <div class="card">

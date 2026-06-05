@@ -1,7 +1,8 @@
 from django.utils.text import slugify
 
 from matches.models import MatchEvent, MatchReport
-
+from matches.ai_report_services import generate_match_ai_analysis
+from ai.services import AIServiceError
 
 GOAL_TYPES = [
     MatchEvent.EventType.GOAL,
@@ -105,6 +106,18 @@ def build_match_report_content(match):
 def generate_match_report(match):
     content = build_match_report_content(match)
 
+    ai_content = {
+        "headline": "",
+        "summary": "",
+        "tactical_reading": "",
+        "key_takeaways": [],
+    }
+
+    try:
+        ai_content = generate_match_ai_analysis(match)
+    except AIServiceError:
+        pass
+
     report, _ = MatchReport.objects.update_or_create(
         match=match,
         defaults={
@@ -113,6 +126,10 @@ def generate_match_report(match):
             "summary": content["summary"],
             "key_points": content["key_points"],
             "tactical_notes": content["tactical_notes"],
+            "ai_headline": ai_content.get("headline", ""),
+            "ai_summary": ai_content.get("summary", ""),
+            "ai_tactical_reading": ai_content.get("tactical_reading", ""),
+            "ai_key_takeaways": "\n".join(ai_content.get("key_takeaways", [])),
             "is_auto_generated": True,
         },
     )

@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,6 +18,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
+    "ai",
 
     'core',
     'teams',
@@ -96,3 +98,7 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",
     ],
 }
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+ENABLE_AI_ANALYSIS = os.environ.get("ENABLE_AI_ANALYSIS", "False") == "True"

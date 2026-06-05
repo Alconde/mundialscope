@@ -148,6 +148,10 @@ class MatchReport(models.Model):
     tactical_notes = models.TextField(blank=True)
     generated_at = models.DateTimeField(auto_now=True)
     is_auto_generated = models.BooleanField(default=True)
+    ai_headline = models.CharField(max_length=255, blank=True)
+    ai_summary = models.TextField(blank=True)
+    ai_tactical_reading = models.TextField(blank=True)
+    ai_key_takeaways = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-generated_at"]

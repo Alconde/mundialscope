@@ -91,6 +91,30 @@
     <div class="section-header">
         <h2>Informe automático</h2>
     </div>
+    {% if match_report.ai_headline or match_report.ai_summary %}
+    <section class="card standings-section">
+        <div class="section-header">
+            <h2>Lectura IA del partido</h2>
+        </div>
+
+        <div class="report-block">
+            <div class="report-section">
+                <h4>{{ match_report.ai_headline }}</h4>
+                <p>{{ match_report.ai_summary|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Interpretación táctica</h4>
+                <p>{{ match_report.ai_tactical_reading|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Claves del análisis</h4>
+                <p>{{ match_report.ai_key_takeaways|linebreaksbr }}</p>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     {% if match_report %}
         <div class="report-block">

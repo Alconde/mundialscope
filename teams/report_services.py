@@ -3,7 +3,8 @@ from django.utils.text import slugify
 from matches.models import Match, MatchEvent
 from players.models import Player
 from teams.models import TeamReport
-
+from teams.ai_report_services import generate_team_ai_analysis
+from ai.services import AIServiceError
 
 GOAL_EVENT_TYPES = [
     MatchEvent.EventType.GOAL,
@@ -107,6 +108,51 @@ def build_team_report_content(team):
 def generate_team_report(team):
     content = build_team_report_content(team)
 
+    summary_data = {
+        "played": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0,
+        "goals_for": 0,
+        "goals_against": 0,
+        "key_events": 0,
+        "cards": 0,
+    }
+
+    matches = list(get_team_matches(team))
+    finished_matches = [match for match in matches if match.status == Match.Status.FINISHED]
+
+    for match in finished_matches:
+        is_home = match.home_team_id == team.id
+        scored = match.home_score if is_home else match.away_score
+        conceded = match.away_score if is_home else match.home_score
+
+        summary_data["played"] += 1
+        summary_data["goals_for"] += scored
+        summary_data["goals_against"] += conceded
+
+        if scored > conceded:
+            summary_data["wins"] += 1
+        elif scored < conceded:
+            summary_data["losses"] += 1
+        else:
+            summary_data["draws"] += 1
+
+    summary_data["key_events"] = MatchEvent.objects.filter(team=team, is_key_event=True).count()
+    summary_data["cards"] = MatchEvent.objects.filter(team=team, event_type__in=CARD_EVENT_TYPES).count()
+
+    ai_content = {
+        "headline": "",
+        "summary": "",
+        "tactical_profile": "",
+        "priority_alerts": [],
+    }
+
+    try:
+        ai_content = generate_team_ai_analysis(team, summary_data)
+    except AIServiceError:
+        pass
+
     report, _ = TeamReport.objects.update_or_create(
         team=team,
         defaults={
@@ -116,6 +162,10 @@ def generate_team_report(team):
             "performance_overview": content["performance_overview"],
             "squad_notes": content["squad_notes"],
             "discipline_notes": content["discipline_notes"],
+            "ai_headline": ai_content.get("headline", ""),
+            "ai_summary": ai_content.get("summary", ""),
+            "ai_tactical_profile": ai_content.get("tactical_profile", ""),
+            "ai_priority_alerts": "\n".join(ai_content.get("priority_alerts", [])),
             "is_auto_generated": True,
         }
     )
