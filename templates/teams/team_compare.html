@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Comparador de selecciones | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="/">← Volver al dashboard</a>
+    <h1>Comparador visual entre selecciones</h1>
+    <p class="hero-text">
+        Compara dos equipos del Mundial con métricas básicas de rendimiento, producción ofensiva y eventos.
+    </p>
+</section>
+
+<section class="card filters-card">
+    <form method="get" class="compare-form">
+        <div class="filter-group">
+            <label for="{{ form.team_a.id_for_label }}">{{ form.team_a.label }}</label>
+            {{ form.team_a }}
+        </div>
+
+        <div class="filter-group">
+            <label for="{{ form.team_b.id_for_label }}">{{ form.team_b.label }}</label>
+            {{ form.team_b }}
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn-primary">Comparar</button>
+            <a href="{% url 'teams:team-compare' %}" class="btn-secondary">Limpiar</a>
+        </div>
+    </form>
+
+    {% if form.errors %}
+        <div class="form-errors">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+</section>
+
+{% if comparison %}
+    <section class="content-grid compare-header-grid">
+        <div class="card compare-team-card">
+            <h2>{{ comparison.team_a_stats.team.name }}</h2>
+            <p>{{ comparison.team_a_stats.team.confederation }} · Grupo {{ comparison.team_a_stats.team.group|default:"-" }}</p>
+        </div>
+
+        <div class="card compare-team-card">
+            <h2>{{ comparison.team_b_stats.team.name }}</h2>
+            <p>{{ comparison.team_b_stats.team.confederation }} · Grupo {{ comparison.team_b_stats.team.group|default:"-" }}</p>
+        </div>
+    </section>
+
+    <section class="card standings-section">
+        <div class="section-header">
+            <h2>Tabla comparativa</h2>
+        </div>
+
+        <table class="standings-table comparison-table">
+            <thead>
+                <tr>
+                    <th>{{ comparison.team_a_stats.team.name }}</th>
+                    <th>Métrica</th>
+                    <th>{{ comparison.team_b_stats.team.name }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for label, value_a, value_b in comparison.comparison_rows %}
+                    <tr>
+                        <td class="{% if value_a > value_b %}winner-cell{% endif %}">{{ value_a }}</td>
+                        <td>{{ label }}</td>
+                        <td class="{% if value_b > value_a %}winner-cell{% endif %}">{{ value_b }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="content-grid dashboard-secondary-grid">
+        <div class="card">
+            <h2>Lectura rápida: {{ comparison.team_a_stats.team.name }}</h2>
+            <ul class="team-list">
+                <li><strong>Puntos </strong><span>{{ comparison.team_a_stats.points }}</span></li>
+                <li><strong>Diferencia de goles </strong><span>{{ comparison.team_a_stats.goal_difference }}</span></li>
+                <li><strong>Promedio GF </strong><span>{{ comparison.team_a_stats.avg_goals_for }}</span></li>
+                <li><strong>Eventos clave </strong><span>{{ comparison.team_a_stats.key_events }}</span></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Lectura rápida: {{ comparison.team_b_stats.team.name }}</h2>
+            <ul class="team-list">
+                <li><strong>Puntos </strong><span>{{ comparison.team_b_stats.points }}</span></li>
+                <li><strong>Diferencia de goles </strong><span>{{ comparison.team_b_stats.goal_difference }}</span></li>
+                <li><strong>Promedio GF </strong><span>{{ comparison.team_b_stats.avg_goals_for }}</span></li>
+                <li><strong>Eventos clave </strong><span>{{ comparison.team_b_stats.key_events }}</span></li>
+            </ul>
+        </div>
+    </section>
+{% else %}
+    <section class="card">
+        <p>Selecciona dos equipos para generar la comparación.</p>
+    </section>
+{% endif %}
+{% endblock %}

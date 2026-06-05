@@ -652,3 +652,49 @@ a {
     color: var(--muted);
     line-height: 1.7;
 }
+
+.compare-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 16px;
+    align-items: end;
+}
+
+.compare-header-grid {
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 24px;
+}
+
+.compare-team-card h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.comparison-table td,
+.comparison-table th {
+    text-align: center;
+}
+
+.comparison-table td:nth-child(2),
+.comparison-table th:nth-child(2) {
+    text-align: left;
+}
+
+.winner-cell {
+    font-weight: 700;
+    color: var(--primary);
+    background: #f5f9ff;
+}
+
+.form-errors {
+    margin-top: 12px;
+    color: #b42318;
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+    .compare-form,
+    .compare-header-grid {
+        grid-template-columns: 1fr;
+    }
+}
