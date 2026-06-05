@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Jugadores | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="/">← Volver al dashboard</a>
+    <h1>Jugadores del Mundial</h1>
+    <p class="hero-text">
+        Filtra por selección, posición o convocatoria y consulta la ficha individual de cada jugador.
+    </p>
+</section>
+
+<section class="card filters-card">
+    <form method="get" class="filters-form players-filters">
+        <div class="filter-group">
+            <label for="search">Buscar</label>
+            <input type="text" name="search" id="search" value="{{ search_value }}" placeholder="Nombre, club o selección">
+        </div>
+
+        <div class="filter-group">
+            <label for="team">Selección</label>
+            <select name="team" id="team">
+                <option value="">Todas</option>
+                {% for team in teams %}
+                    <option value="{{ team.id }}" {% if selected_team == team.id|stringformat:"s" %}selected{% endif %}>
+                        {{ team.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="position">Posición</label>
+            <select name="position" id="position">
+                <option value="">Todas</option>
+                {% for value, label in position_choices %}
+                    <option value="{{ value }}" {% if selected_position == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="called_up">Convocado</label>
+            <select name="called_up" id="called_up">
+                <option value="">Todos</option>
+                <option value="yes" {% if selected_called_up == "yes" %}selected{% endif %}>Sí</option>
+                <option value="no" {% if selected_called_up == "no" %}selected{% endif %}>No</option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn-primary">Filtrar</button>
+            <a href="{% url 'players:player-page-list' %}" class="btn-secondary">Limpiar</a>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h2>Listado de jugadores</h2>
+
+    {% if players %}
+        <div class="players-grid">
+            {% for player in players %}
+                <a class="player-card" href="{% url 'players:player-page-detail' player.pk %}">
+                    <div class="player-card-top">
+                        <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        <span class="status-badge">{{ player.position }}</span>
+                    </div>
+
+                    <div class="player-card-meta">
+                        <span>{{ player.team.name|default:"Sin selección" }}</span>
+                        {% if player.club %}<span>{{ player.club }}</span>{% endif %}
+                        {% if player.shirt_number %}<span>#{{ player.shirt_number }}</span>{% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if search_value %}&search={{ search_value }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}{% if selected_position %}&position={{ selected_position }}{% endif %}{% if selected_called_up %}&called_up={{ selected_called_up }}{% endif %}">Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_value %}&search={{ search_value }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}{% if selected_position %}&position={{ selected_position }}{% endif %}{% if selected_called_up %}&called_up={{ selected_called_up }}{% endif %}">Anterior</a>
+            {% endif %}
+
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_value %}&search={{ search_value }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}{% if selected_position %}&position={{ selected_position }}{% endif %}{% if selected_called_up %}&called_up={{ selected_called_up }}{% endif %}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_value %}&search={{ search_value }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}{% if selected_position %}&position={{ selected_position }}{% endif %}{% if selected_called_up %}&called_up={{ selected_called_up }}{% endif %}">Última</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>No hay jugadores con esos filtros.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -22,7 +22,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("teams/", include("teams.urls")),
     path("matches/", include("matches.urls")),
+    path("players/", include("players.urls")),
     path("api/teams/", include("teams.api_urls")),
-    path("api/players/", include("players.urls")),
+    path("api/players/", include("players.api_urls")),
     path("api/matches/", include("matches.api_urls")),
 ]

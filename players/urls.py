@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import PlayerListAPIView, PlayerDetailAPIView
+from .views import PlayerListPageView, PlayerDetailPageView
 
 app_name = "players"
 
 urlpatterns = [
-    path("", PlayerListAPIView.as_view(), name="player-list"),
-    path("<int:pk>/", PlayerDetailAPIView.as_view(), name="player-detail"),
+    path("", PlayerListPageView.as_view(), name="player-page-list"),
+    path("<int:pk>/", PlayerDetailPageView.as_view(), name="player-page-detail"),
 ]

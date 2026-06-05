@@ -47,7 +47,9 @@
             <ul class="player-list">
                 {% for player in team.players.all %}
                     <li>
-                        <strong>{{ player.first_name }} {{ player.last_name }}</strong><br>
+                        <a href="{% url 'players:player-page-detail' player.pk %}">
+                            <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        </a>
                         <span>
                             {{ player.position }}{% if player.shirt_number %} · #{{ player.shirt_number }}{% endif %}
                             {% if player.club %} · {{ player.club }}{% endif %}

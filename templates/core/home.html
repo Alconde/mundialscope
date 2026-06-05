@@ -228,7 +228,9 @@
             <ol class="ranking-list">
                 {% for player in top_scorers %}
                     <li>
-                        <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        <a href="{% url 'players:player-page-detail' player.pk %}">
+                            <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        </a>
                         <span>
                             {{ player.team.name|default:"Sin selección" }} · {{ player.goals }} goles
                         </span>
@@ -246,7 +248,9 @@
             <ol class="ranking-list">
                 {% for player in top_carded_players %}
                     <li>
-                        <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        <a href="{% url 'players:player-page-detail' player.pk %}">
+                            <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        </a>
                         <span>
                             {{ player.team.name|default:"Sin selección" }} · {{ player.total_cards }} tarjetas
                             ({{ player.yellow_cards }} amarillas, {{ player.red_cards }} rojas)
