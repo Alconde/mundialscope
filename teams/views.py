@@ -5,7 +5,7 @@ from django.views.generic import DetailView, TemplateView
 from .services import build_team_stats
 from .forms import TeamComparisonForm
 from .comparison_services import build_team_comparison
-
+from .report_services import generate_team_report
 
 class TeamListAPIView(generics.ListAPIView):
     queryset = Team.objects.all()
@@ -44,7 +44,12 @@ class TeamDetailPageView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["team_stats"] = build_team_stats(self.object)
+        players = self.object.players.all().order_by("position", "last_name", "first_name")
+
+        context["players"] = players
+        context["called_up_count"] = players.filter(is_called_up=True).count()
+        context["team_report"] = generate_team_report(self.object)
+
         return context
     
 class TeamComparisonPageView(TemplateView):

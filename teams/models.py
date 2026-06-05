@@ -25,3 +25,25 @@ class Team(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.fifa_code})"
+    
+
+class TeamReport(models.Model):
+    team = models.OneToOneField(
+        "teams.Team",
+        on_delete=models.CASCADE,
+        related_name="report"
+    )
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    summary = models.TextField(blank=True)
+    performance_overview = models.TextField(blank=True)
+    squad_notes = models.TextField(blank=True)
+    discipline_notes = models.TextField(blank=True)
+    generated_at = models.DateTimeField(auto_now=True)
+    is_auto_generated = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["team__name"]
+
+    def __str__(self):
+        return self.title

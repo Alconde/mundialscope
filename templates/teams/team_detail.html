@@ -42,7 +42,39 @@
     {% include "teams/partials/recent_matches.html" %}
     {% include "teams/partials/upcoming_matches.html" %}
 </section>
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Informe automático de selección</h2>
+    </div>
 
+    {% if team_report %}
+        <div class="report-block">
+            <h3>{{ team_report.title }}</h3>
+
+            <div class="report-section">
+                <h4>Resumen</h4>
+                <p>{{ team_report.summary|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Rendimiento competitivo</h4>
+                <p>{{ team_report.performance_overview|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Plantilla</h4>
+                <p>{{ team_report.squad_notes|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Disciplina</h4>
+                <p>{{ team_report.discipline_notes|linebreaksbr }}</p>
+            </div>
+        </div>
+    {% else %}
+        <p>No hay informe disponible todavía para esta selección.</p>
+    {% endif %}
+</section>
 <section class="content-grid team-detail-grid">
     <div class="card">
         <h2>Plantilla</h2>
