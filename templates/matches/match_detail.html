@@ -63,4 +63,43 @@
         </ul>
     </div>
 </section>
+<section class="card">
+    <h2>Cronología del partido</h2>
+
+    {% if match.events.all %}
+        <ul class="event-timeline">
+            {% for event in match.events.all %}
+                <li class="event-row {% if event.team_id == match.home_team_id %}home-event{% else %}away-event{% endif %}">
+                    <div class="event-minute">
+                        {{ event.minute }}{% if event.extra_minute %}+{{ event.extra_minute }}{% endif %}'
+                    </div>
+
+                    <div class="event-content">
+                        <strong>{{ event.get_event_type_display }}</strong>
+
+                        {% if event.player %}
+                            <span>{{ event.player.first_name }} {{ event.player.last_name }}</span>
+                        {% endif %}
+
+                        {% if event.related_player %}
+                            <span> · Relacionado: {{ event.related_player.first_name }} {{ event.related_player.last_name }}</span>
+                        {% endif %}
+
+                        <div class="event-meta">
+                            <span>{{ event.team.name }}</span>
+                            {% if event.title %}<span> · {{ event.title }}</span>{% endif %}
+                            {% if event.is_key_event %}<span> · Evento clave</span>{% endif %}
+                        </div>
+
+                        {% if event.description %}
+                            <p>{{ event.description }}</p>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay eventos registrados todavía para este partido.</p>
+    {% endif %}
+</section>
 {% endblock %}

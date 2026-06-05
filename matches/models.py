@@ -76,3 +76,62 @@ class Match(models.Model):
 
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
+    
+from django.db import models
+
+
+class MatchEvent(models.Model):
+    class EventType(models.TextChoices):
+        GOAL = "goal", "Goal"
+        OWN_GOAL = "own_goal", "Own Goal"
+        PENALTY_GOAL = "penalty_goal", "Penalty Goal"
+        MISSED_PENALTY = "missed_penalty", "Missed Penalty"
+        YELLOW_CARD = "yellow_card", "Yellow Card"
+        RED_CARD = "red_card", "Red Card"
+        SECOND_YELLOW_RED = "second_yellow_red", "Second Yellow Red"
+        SUBSTITUTION = "substitution", "Substitution"
+        VAR = "var", "VAR Review"
+        INJURY = "injury", "Injury"
+        OTHER = "other", "Other"
+
+    match = models.ForeignKey(
+        "matches.Match",
+        on_delete=models.CASCADE,
+        related_name="events"
+    )
+    team = models.ForeignKey(
+        "teams.Team",
+        on_delete=models.CASCADE,
+        related_name="match_events"
+    )
+    player = models.ForeignKey(
+        "players.Player",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="match_events"
+    )
+    related_player = models.ForeignKey(
+        "players.Player",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="related_match_events"
+    )
+    minute = models.PositiveIntegerField()
+    extra_minute = models.PositiveIntegerField(null=True, blank=True)
+    event_type = models.CharField(
+        max_length=30,
+        choices=EventType.choices
+    )
+    title = models.CharField(max_length=150, blank=True)
+    description = models.TextField(blank=True)
+    is_key_event = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["minute", "extra_minute", "id"]
+
+    def __str__(self):
+        extra = f"+{self.extra_minute}" if self.extra_minute else ""
+        return f"{self.match} - {self.minute}{extra}' - {self.get_event_type_display()}"

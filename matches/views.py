@@ -136,8 +136,9 @@ class MatchDetailPageView(DetailView):
             "tournament",
             "home_team",
             "away_team",
+        ).prefetch_related(
+            "events",
         )
-    
 class GroupStandingsPageView(TemplateView):
     template_name = "matches/group_standings.html"
 
