@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | MundialScope{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Plataforma de análisis del Mundial</p>
+    <h1>Todo el Mundial, en una sola lectura.</h1>
+    <p class="hero-text">
+        Sigue el torneo, compara selecciones y visualiza los próximos partidos desde un panel central.
+    </p>
+</section>
+
+<section class="kpi-grid">
+    <article class="card kpi-card">
+        <span class="kpi-label">Torneo activo</span>
+        <strong class="kpi-value">
+            {% if active_tournament %}
+                {{ active_tournament.name }} {{ active_tournament.year }}
+            {% else %}
+                Sin torneo activo
+            {% endif %}
+        </strong>
+    </article>
+
+    <article class="card kpi-card">
+        <span class="kpi-label">Selecciones</span>
+        <strong class="kpi-value">{{ total_teams }}</strong>
+    </article>
+
+    <article class="card kpi-card">
+        <span class="kpi-label">Jugadores convocados</span>
+        <strong class="kpi-value">{{ total_players }}</strong>
+    </article>
+
+    <article class="card kpi-card">
+        <span class="kpi-label">Partidos en vivo</span>
+        <strong class="kpi-value">{{ live_matches_count }}</strong>
+    </article>
+</section>
+
+<section class="content-grid dashboard-main-grid">
+    <div class="card">
+        <h2>Partidos en vivo</h2>
+        {% if live_matches %}
+            <ul class="match-list">
+                {% for match in live_matches %}
+                    <li>
+                        <a class="match-row-link" href="{% url 'matches:match-page-detail' match.pk %}">
+                            <div>
+                                <strong>{{ match.home_team.name }} {{ match.home_score }} - {{ match.away_score }} {{ match.away_team.name }}</strong><br>
+                                <span>{{ match.stage }} · {{ match.city }}</span>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay partidos en vivo ahora mismo.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Próximos partidos</h2>
+        {% if next_matches %}
+            <ul class="match-list">
+                {% for match in next_matches %}
+                    <li>
+                        <a class="match-row-link" href="{% url 'matches:match-page-detail' match.pk %}">
+                            <div>
+                                <strong>{{ match.home_team.name }} vs {{ match.away_team.name }}</strong><br>
+                                <span>{{ match.match_date|date:"d/m/Y H:i" }} · {{ match.stage }} · {{ match.city }}</span>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay partidos próximos disponibles.</p>
+        {% endif %}
+        <p class="section-link">
+            <a href="{% url 'matches:match-page-list' %}">Ver todos los partidos →</a>
+        </p>
+    </div>
+</section>
+
+<section class="content-grid dashboard-secondary-grid">
+    <div class="card">
+        <h2>Selecciones destacadas</h2>
+        {% if featured_teams %}
+            <ul class="team-list">
+                {% for team in featured_teams %}
+                    <li>
+                        <a href="{% url 'teams:team-page-detail' team.pk %}">
+                            <strong>{{ team.name }}</strong>
+                            <span>{{ team.confederation }} · Grupo {{ team.group }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay selecciones cargadas.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Distribución por grupos</h2>
+        {% if teams_by_group %}
+            <ul class="team-list">
+                {% for item in teams_by_group %}
+                    <li>
+                        <strong>Grupo {{ item.group|default:"-" }}</strong>
+                        <span>{{ item.total }} selecciones</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay grupos disponibles.</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="content-grid dashboard-secondary-grid">
+    <div class="card">
+        <h2>Top ranking FIFA</h2>
+        {% if top_ranked_teams %}
+            <ol class="ranking-list">
+                {% for team in top_ranked_teams %}
+                    <li>
+                        <strong>{{ team.name }}</strong>
+                        <span>Ranking {{ team.fifa_ranking }}</span>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>No hay ranking disponible.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Plantillas más amplias</h2>
+        {% if top_squads %}
+            <ol class="ranking-list">
+                {% for team in top_squads %}
+                    <li>
+                        <strong>{{ team.name }}</strong>
+                        <span>{{ team.player_count }} jugadores</span>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>No hay datos de plantilla.</p>
+        {% endif %}
+    </div>
+</section>
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Clasificación por grupos</h2>
+        <a href="{% url 'matches:group-standings' %}" class="section-link-inline">Ver clasificación completa</a>
+    </div>
+
+    {% if group_standings %}
+        <div class="group-grid">
+            {% for group, rows in group_standings.items %}
+                <div class="group-card">
+                    <h3>Grupo {{ group }}</h3>
+                    <table class="standings-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Selección</th>
+                                <th>Pts</th>
+                                <th>PJ</th>
+                                <th>DG</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in rows %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <a href="{% url 'teams:team-page-detail' row.team.pk %}">
+                                            {{ row.team.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ row.points }}</td>
+                                    <td>{{ row.played }}</td>
+                                    <td>{{ row.goal_difference }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Todavía no hay clasificación disponible.</p>
+    {% endif %}
+</section>
+{% endblock %}

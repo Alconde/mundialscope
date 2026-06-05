@@ -1,0 +1,78 @@
+from django.db import models
+
+
+class Tournament(models.Model):
+    class TournamentType(models.TextChoices):
+        WORLD_CUP = "world_cup", "World Cup"
+        QUALIFIERS = "qualifiers", "Qualifiers"
+        FRIENDLY = "friendly", "Friendly"
+
+    name = models.CharField(max_length=150)
+    year = models.PositiveIntegerField()
+    host_country = models.CharField(max_length=100, blank=True)
+    tournament_type = models.CharField(
+        max_length=20,
+        choices=TournamentType.choices,
+        default=TournamentType.WORLD_CUP,
+    )
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-year", "name"]
+        unique_together = ("name", "year")
+
+    def __str__(self):
+        return f"{self.name} {self.year}"
+    
+class Match(models.Model):
+    class Stage(models.TextChoices):
+        GROUP = "group", "Group Stage"
+        ROUND_OF_32 = "round_32", "Round of 32"
+        ROUND_OF_16 = "round_16", "Round of 16"
+        QUARTERFINAL = "quarterfinal", "Quarterfinal"
+        SEMIFINAL = "semifinal", "Semifinal"
+        THIRD_PLACE = "third_place", "Third Place"
+        FINAL = "final", "Final"
+
+    class Status(models.TextChoices):
+        SCHEDULED = "scheduled", "Scheduled"
+        LIVE = "live", "Live"
+        FINISHED = "finished", "Finished"
+        POSTPONED = "postponed", "Postponed"
+        CANCELLED = "cancelled", "Cancelled"
+
+    tournament = models.ForeignKey(
+        "matches.Tournament",
+        on_delete=models.CASCADE,
+        related_name="matches",
+    )
+    home_team = models.ForeignKey(
+        "teams.Team",
+        on_delete=models.CASCADE,
+        related_name="home_matches",
+    )
+    away_team = models.ForeignKey(
+        "teams.Team",
+        on_delete=models.CASCADE,
+        related_name="away_matches",
+    )
+    stage = models.CharField(max_length=20, choices=Stage.choices)
+    group = models.CharField(max_length=1, blank=True)
+    match_date = models.DateTimeField()
+    stadium = models.CharField(max_length=120, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.SCHEDULED,
+    )
+    home_score = models.PositiveIntegerField(default=0)
+    away_score = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["match_date"]
+
+    def __str__(self):
+        return f"{self.home_team} vs {self.away_team}"

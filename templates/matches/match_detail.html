@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ match.home_team.name }} vs {{ match.away_team.name }} | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="{% url 'matches:match-page-list' %}">← Volver a partidos</a>
+    <h1>{{ match.home_team.name }} vs {{ match.away_team.name }}</h1>
+    <p class="hero-text">
+        {{ match.tournament.name }} {{ match.tournament.year }} · {{ match.stage }}
+    </p>
+</section>
+
+<section class="kpi-grid team-kpis">
+    <article class="card kpi-card">
+        <span class="kpi-label">Estado</span>
+        <strong class="kpi-value small">{{ match.status }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Marcador</span>
+        <strong class="kpi-value">{{ match.home_score }} - {{ match.away_score }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Fecha</span>
+        <strong class="kpi-value small">{{ match.match_date|date:"d/m/Y H:i" }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Grupo</span>
+        <strong class="kpi-value small">{{ match.group|default:"-" }}</strong>
+    </article>
+</section>
+
+<section class="content-grid team-detail-grid">
+    <div class="card">
+        <h2>Equipos</h2>
+        <ul class="team-list">
+            <li>
+                <strong>Local</strong>
+                <span>
+                    <a href="{% url 'teams:team-page-detail' match.home_team.pk %}">
+                        {{ match.home_team.name }}
+                    </a>
+                </span>
+            </li>
+            <li>
+                <strong>Visitante</strong>
+                <span>
+                    <a href="{% url 'teams:team-page-detail' match.away_team.pk %}">
+                        {{ match.away_team.name }}
+                    </a>
+                </span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Ficha del partido</h2>
+        <ul class="team-list">
+            <li><strong>Estadio</strong><span>{{ match.stadium|default:"No disponible" }}</span></li>
+            <li><strong>Ciudad</strong><span>{{ match.city|default:"No disponible" }}</span></li>
+            <li><strong>Fase</strong><span>{{ match.stage }}</span></li>
+            <li><strong>Torneo</strong><span>{{ match.tournament.name }} {{ match.tournament.year }}</span></li>
+        </ul>
+    </div>
+</section>
+{% endblock %}

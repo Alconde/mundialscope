@@ -1,0 +1,19 @@
+<div class="card">
+    <h2>Próximos partidos</h2>
+    {% if team_stats.upcoming_matches %}
+        <ul class="match-list detailed">
+            {% for match in team_stats.upcoming_matches %}
+                <li>
+                    <a class="match-row-link" href="{% url 'matches:match-page-detail' match.pk %}">
+                        <div>
+                            <strong>{{ match.home_team.name }} vs {{ match.away_team.name }}</strong><br>
+                            <span>{{ match.match_date|date:"d/m/Y H:i" }} · {{ match.stage }} · {{ match.city }}</span>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay partidos programados para esta selección.</p>
+    {% endif %}
+</div>

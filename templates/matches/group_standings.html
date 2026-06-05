@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Clasificación de grupos | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="/">← Volver al dashboard</a>
+    <h1>Clasificación de grupos</h1>
+    <p class="hero-text">
+        Consulta el estado actual de cada grupo del Mundial con puntos, partidos jugados y diferencia de goles.
+    </p>
+</section>
+
+{% if group_standings %}
+    <div class="group-grid full-groups">
+        {% for group, rows in group_standings.items %}
+            <section class="card group-card">
+                <h2>Grupo {{ group }}</h2>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Selección</th>
+                            <th>PJ</th>
+                            <th>G</th>
+                            <th>E</th>
+                            <th>P</th>
+                            <th>GF</th>
+                            <th>GC</th>
+                            <th>DG</th>
+                            <th>Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{% url 'teams:team-page-detail' row.team.pk %}">
+                                        {{ row.team.name }}
+                                    </a>
+                                </td>
+                                <td>{{ row.played }}</td>
+                                <td>{{ row.wins }}</td>
+                                <td>{{ row.draws }}</td>
+                                <td>{{ row.losses }}</td>
+                                <td>{{ row.goals_for }}</td>
+                                <td>{{ row.goals_against }}</td>
+                                <td>{{ row.goal_difference }}</td>
+                                <td><strong>{{ row.points }}</strong></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No hay grupos con partidos finalizados todavía.</p>
+{% endif %}
+{% endblock %}

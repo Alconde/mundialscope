@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Partidos | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="/">← Volver al dashboard</a>
+    <h1>Partidos del Mundial</h1>
+    <p class="hero-text">
+        Consulta el calendario, filtra por fase o estado y entra al detalle de cada encuentro.
+    </p>
+</section>
+
+<section class="card filters-card">
+    <form method="get" class="filters-form">
+        <div class="filter-group">
+            <label for="stage">Fase</label>
+            <select name="stage" id="stage">
+                <option value="">Todas</option>
+                {% for value, label in stage_choices %}
+                    <option value="{{ value }}" {% if selected_stage == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="status">Estado</label>
+            <select name="status" id="status">
+                <option value="">Todos</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="team">Selección</label>
+            <select name="team" id="team">
+                <option value="">Todas</option>
+                {% for team in teams %}
+                    <option value="{{ team.id }}" {% if selected_team == team.id|stringformat:"s" %}selected{% endif %}>
+                        {{ team.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn-primary">Filtrar</button>
+            <a href="{% url 'matches:match-page-list' %}" class="btn-secondary">Limpiar</a>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h2>Listado de partidos</h2>
+
+    {% if matches %}
+        <ul class="match-list detailed">
+            {% for match in matches %}
+                <li>
+                    <a class="match-row-link" href="{% url 'matches:match-page-detail' match.pk %}">
+                        <div>
+                            <strong>{{ match.home_team.name }} vs {{ match.away_team.name }}</strong><br>
+                            <span>{{ match.match_date|date:"d/m/Y H:i" }} · {{ match.stage }} · {{ match.city }}</span>
+                        </div>
+                        <div class="match-meta">
+                            <span class="status-badge">{{ match.status }}</span>
+                            <span class="score-inline">{{ match.home_score }} - {{ match.away_score }}</span>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if selected_stage %}&stage={{ selected_stage }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}">Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if selected_stage %}&stage={{ selected_stage }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}">Anterior</a>
+            {% endif %}
+
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if selected_stage %}&stage={{ selected_stage }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_stage %}&stage={{ selected_stage }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_team %}&team={{ selected_team }}{% endif %}">Última</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>No hay partidos para esos filtros.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,169 @@
+[
+  {
+    "model": "matches.tournament",
+    "pk": 1,
+    "fields": {
+      "name": "FIFA World Cup",
+      "year": 2026,
+      "host_country": "United States, Mexico, Canada",
+      "tournament_type": "world_cup",
+      "start_date": "2026-06-11",
+      "end_date": "2026-07-19",
+      "is_active": true
+    }
+  },
+  {
+    "model": "teams.team",
+    "pk": 1,
+    "fields": {
+      "name": "Spain",
+      "fifa_code": "ESP",
+      "confederation": "UEFA",
+      "coach": "Luis de la Fuente",
+      "fifa_ranking": 3,
+      "group": "A",
+      "primary_color": "#C60B1E",
+      "secondary_color": "#FFC400",
+      "is_active": true
+    }
+  },
+  {
+    "model": "teams.team",
+    "pk": 2,
+    "fields": {
+      "name": "Argentina",
+      "fifa_code": "ARG",
+      "confederation": "CONMEBOL",
+      "coach": "Lionel Scaloni",
+      "fifa_ranking": 1,
+      "group": "A",
+      "primary_color": "#6EC1E4",
+      "secondary_color": "#FFFFFF",
+      "is_active": true
+    }
+  },
+  {
+    "model": "teams.team",
+    "pk": 3,
+    "fields": {
+      "name": "France",
+      "fifa_code": "FRA",
+      "confederation": "UEFA",
+      "coach": "Didier Deschamps",
+      "fifa_ranking": 2,
+      "group": "B",
+      "primary_color": "#0055A4",
+      "secondary_color": "#EF4135",
+      "is_active": true
+    }
+  },
+  {
+    "model": "teams.team",
+    "pk": 4,
+    "fields": {
+      "name": "Brazil",
+      "fifa_code": "BRA",
+      "confederation": "CONMEBOL",
+      "coach": "Dorival Júnior",
+      "fifa_ranking": 5,
+      "group": "B",
+      "primary_color": "#FFDF00",
+      "secondary_color": "#009C3B",
+      "is_active": true
+    }
+  },
+  {
+    "model": "players.player",
+    "pk": 1,
+    "fields": {
+      "team": 1,
+      "first_name": "Rodri",
+      "last_name": "Hernández",
+      "shirt_number": 16,
+      "position": "MF",
+      "date_of_birth": "1996-06-22",
+      "club": "Manchester City",
+      "market_value": "120000000.00",
+      "is_called_up": true
+    }
+  },
+  {
+    "model": "players.player",
+    "pk": 2,
+    "fields": {
+      "team": 1,
+      "first_name": "Lamine",
+      "last_name": "Yamal",
+      "shirt_number": 19,
+      "position": "FW",
+      "date_of_birth": "2007-07-13",
+      "club": "FC Barcelona",
+      "market_value": "90000000.00",
+      "is_called_up": true
+    }
+  },
+  {
+    "model": "players.player",
+    "pk": 3,
+    "fields": {
+      "team": 2,
+      "first_name": "Alexis",
+      "last_name": "Mac Allister",
+      "shirt_number": 20,
+      "position": "MF",
+      "date_of_birth": "1998-12-24",
+      "club": "Liverpool",
+      "market_value": "75000000.00",
+      "is_called_up": true
+    }
+  },
+  {
+    "model": "players.player",
+    "pk": 4,
+    "fields": {
+      "team": 4,
+      "first_name": "Vinicius",
+      "last_name": "Junior",
+      "shirt_number": 7,
+      "position": "FW",
+      "date_of_birth": "2000-07-12",
+      "club": "Real Madrid",
+      "market_value": "150000000.00",
+      "is_called_up": true
+    }
+  },
+  {
+    "model": "matches.match",
+    "pk": 1,
+    "fields": {
+      "tournament": 1,
+      "home_team": 1,
+      "away_team": 2,
+      "stage": "group",
+      "group": "A",
+      "match_date": "2026-06-12T20:00:00Z",
+      "stadium": "MetLife Stadium",
+      "city": "New York",
+      "status": "scheduled",
+      "home_score": 0,
+      "away_score": 0
+    }
+  },
+  {
+    "model": "matches.match",
+    "pk": 2,
+    "fields": {
+      "tournament": 1,
+      "home_team": 3,
+      "away_team": 4,
+      "stage": "group",
+      "group": "B",
+      "match_date": "2026-06-13T19:00:00Z",
+      "stadium": "SoFi Stadium",
+      "city": "Los Angeles",
+      "status": "scheduled",
+      "home_score": 0,
+      "away_score": 0
+    }
+  }
+]

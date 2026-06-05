@@ -1,0 +1,51 @@
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Resumen competitivo</h2>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <span>Puntos</span>
+            <strong>{{ team_stats.points }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>PJ</span>
+            <strong>{{ team_stats.played }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>Victorias</span>
+            <strong>{{ team_stats.wins }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>Empates</span>
+            <strong>{{ team_stats.draws }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>Derrotas</span>
+            <strong>{{ team_stats.losses }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>GF</span>
+            <strong>{{ team_stats.goals_for }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>GC</span>
+            <strong>{{ team_stats.goals_against }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>DG</span>
+            <strong>{{ team_stats.goal_difference }}</strong>
+        </div>
+    </div>
+
+    <div class="form-strip">
+        <span class="form-label">Forma reciente</span>
+        <div class="form-badges">
+            {% for item in team_stats.recent_form %}
+                <span class="form-badge form-{{ item|lower }}">{{ item }}</span>
+            {% empty %}
+                <span class="muted">Sin partidos finalizados aún.</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
