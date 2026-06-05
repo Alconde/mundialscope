@@ -9,7 +9,6 @@ from .models import Tournament, Match, MatchEvent
 from .serializers import TournamentSerializer, MatchSerializer
 from teams.models import Team
 from players.models import Player
-from django.views.generic import TemplateView
 from .services import build_group_standings
 from .analytics_services import (
     get_top_scorers,
@@ -19,7 +18,8 @@ from .analytics_services import (
 )
 from .report_services import generate_match_report
 
-
+from django.views.generic import ListView, DetailView, TemplateView
+from .tactical_dashboard_services import get_tournament_tactical_dashboard
 
 
 class TournamentListAPIView(generics.ListAPIView):
@@ -184,4 +184,13 @@ class GroupStandingsPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["group_standings"] = build_group_standings()
+        return context
+    
+class TournamentTacticalDashboardView(TemplateView):
+    template_name = "matches/tactical_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dashboard = get_tournament_tactical_dashboard()
+        context["dashboard"] = dashboard
         return context

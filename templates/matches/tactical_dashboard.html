@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard táctico | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="/">← Volver al dashboard principal</a>
+    <h1>Dashboard táctico del torneo</h1>
+    <p class="hero-text">
+        Vista global del Mundial para detectar tendencias competitivas, producción ofensiva, disciplina y ritmo del torneo.
+    </p>
+</section>
+
+<section class="kpi-grid team-kpis">
+    <article class="card kpi-card">
+        <span class="kpi-label">Partidos finalizados</span>
+        <strong class="kpi-value">{{ dashboard.summary.total_matches }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Selecciones activas</span>
+        <strong class="kpi-value">{{ dashboard.summary.total_teams }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Eventos totales</span>
+        <strong class="kpi-value">{{ dashboard.summary.total_events }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Goles</span>
+        <strong class="kpi-value">{{ dashboard.summary.total_goals }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Tarjetas</span>
+        <strong class="kpi-value">{{ dashboard.summary.total_cards }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Eventos clave</span>
+        <strong class="kpi-value">{{ dashboard.summary.total_key_events }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Media de goles</span>
+        <strong class="kpi-value small">{{ dashboard.summary.avg_goals_per_match }}</strong>
+    </article>
+    <article class="card kpi-card">
+        <span class="kpi-label">Media de eventos</span>
+        <strong class="kpi-value small">{{ dashboard.summary.avg_events_per_match }}</strong>
+    </article>
+</section>
+
+<section class="content-grid compare-charts-grid">
+    <div class="card">
+        <h2>Actividad de eventos por día</h2>
+        <div id="events-timeline-chart" class="chart-box"></div>
+    </div>
+
+    <div class="card">
+        <h2>Partidos finalizados por día</h2>
+        <div id="matches-timeline-chart" class="chart-box"></div>
+    </div>
+</section>
+
+<section class="content-grid dashboard-secondary-grid">
+    <div class="card">
+        <h2>Selecciones más goleadoras</h2>
+        <ul class="team-list">
+            {% for team in dashboard.top_scoring_teams %}
+                <li>
+                    <strong>
+                        <a href="{% url 'teams:team-page-detail' team.pk %}">{{ team.name }}</a>
+                    </strong>
+                    <span>{{ team.goals }} goles · {{ team.key_events }} eventos clave</span>
+                </li>
+            {% empty %}
+                <li><span>No hay datos suficientes todavía.</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Selecciones más disciplinadas</h2>
+        <ul class="team-list">
+            {% for team in dashboard.most_disciplined_teams %}
+                <li>
+                    <strong>
+                        <a href="{% url 'teams:team-page-detail' team.pk %}">{{ team.name }}</a>
+                    </strong>
+                    <span>{{ team.cards }} tarjetas</span>
+                </li>
+            {% empty %}
+                <li><span>No hay datos suficientes todavía.</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Selecciones con mayor carga disciplinaria</h2>
+    </div>
+
+    <table class="standings-table comparison-table">
+        <thead>
+            <tr>
+                <th>Selección</th>
+                <th>Tarjetas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team in dashboard.least_disciplined_teams %}
+                <tr>
+                    <td>
+                        <a href="{% url 'teams:team-page-detail' team.pk %}">{{ team.name }}</a>
+                    </td>
+                    <td>{{ team.cards }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No hay datos suficientes todavía.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Alertas tácticas</h2>
+    </div>
+
+    {% if dashboard.tactical_alerts %}
+        <ul class="player-list">
+            {% for alert in dashboard.tactical_alerts %}
+                <li>{{ alert }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay alertas generadas todavía.</p>
+    {% endif %}
+</section>
+
+{{ dashboard.event_timeline|json_script:"event-timeline-data" }}
+{{ dashboard.matches_timeline|json_script:"matches-timeline-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+    const eventTimeline = JSON.parse(document.getElementById("event-timeline-data").textContent);
+    const matchesTimeline = JSON.parse(document.getElementById("matches-timeline-data").textContent);
+
+    const eventDates = eventTimeline.map(item => item.day);
+    const totalEvents = eventTimeline.map(item => item.total);
+    const totalGoals = eventTimeline.map(item => item.goals);
+    const totalCards = eventTimeline.map(item => item.cards);
+
+    Plotly.newPlot("events-timeline-chart", [
+        {
+            x: eventDates,
+            y: totalEvents,
+            type: "scatter",
+            mode: "lines+markers",
+            name: "Eventos"
+        },
+        {
+            x: eventDates,
+            y: totalGoals,
+            type: "scatter",
+            mode: "lines+markers",
+            name: "Goles"
+        },
+        {
+            x: eventDates,
+            y: totalCards,
+            type: "scatter",
+            mode: "lines+markers",
+            name: "Tarjetas"
+        }
+    ], {
+        paper_bgcolor: "white",
+        plot_bgcolor: "white",
+        margin: { t: 20, r: 10, b: 50, l: 40 },
+        legend: { orientation: "h", y: 1.12, x: 0.5, xanchor: "center" },
+        xaxis: { title: "Fecha" },
+        yaxis: { title: "Cantidad" }
+    }, {
+        responsive: true,
+        displayModeBar: false
+    });
+
+    const matchDates = matchesTimeline.map(item => item.day);
+    const matchCounts = matchesTimeline.map(item => item.total);
+
+    Plotly.newPlot("matches-timeline-chart", [
+        {
+            x: matchDates,
+            y: matchCounts,
+            type: "scatter",
+            mode: "lines+markers",
+            fill: "tozeroy",
+            name: "Partidos"
+        }
+    ], {
+        paper_bgcolor: "white",
+        plot_bgcolor: "white",
+        margin: { t: 20, r: 10, b: 50, l: 40 },
+        legend: { orientation: "h", y: 1.12, x: 0.5, xanchor: "center" },
+        xaxis: { title: "Fecha" },
+        yaxis: { title: "Partidos" }
+    }, {
+        responsive: true,
+        displayModeBar: false
+    });
+</script>
+{% endblock %}
