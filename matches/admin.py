@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tournament, Match, MatchEvent
+from .models import Tournament, Match, MatchEvent, MatchReport
 
 
 class MatchEventInline(admin.TabularInline):
@@ -48,3 +48,10 @@ class MatchEventAdmin(admin.ModelAdmin):
     list_display = ("match", "minute", "event_type", "team", "player", "is_key_event")
     list_filter = ("event_type", "team", "is_key_event")
     search_fields = ("match__home_team__name", "match__away_team__name", "player__last_name", "title")
+
+@admin.register(MatchReport)
+class MatchReportAdmin(admin.ModelAdmin):
+    list_display = ("title", "match", "generated_at", "is_auto_generated")
+    list_filter = ("is_auto_generated", "generated_at")
+    search_fields = ("title", "match__home_team__name", "match__away_team__name")
+    prepopulated_fields = {"slug": ("title",)}

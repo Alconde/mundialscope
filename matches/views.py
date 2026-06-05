@@ -17,6 +17,8 @@ from .analytics_services import (
     get_most_eventful_matches,
     get_events_summary,
 )
+from .report_services import generate_match_report
+
 
 
 
@@ -169,6 +171,12 @@ class MatchDetailPageView(DetailView):
             "key_events": events.filter(is_key_event=True).count(),
             "substitutions": events.filter(event_type=MatchEvent.EventType.SUBSTITUTION).count(),
         }
+
+        if self.object.status == Match.Status.FINISHED:
+            context["match_report"] = generate_match_report(self.object)
+        else:
+            context["match_report"] = None
+
         return context
 class GroupStandingsPageView(TemplateView):
     template_name = "matches/group_standings.html"

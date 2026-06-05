@@ -133,3 +133,24 @@ class MatchEvent(models.Model):
     def __str__(self):
         extra = f"+{self.extra_minute}" if self.extra_minute else ""
         return f"{self.match} - {self.minute}{extra}' - {self.get_event_type_display()}"
+    
+
+class MatchReport(models.Model):
+    match = models.OneToOneField(
+        "matches.Match",
+        on_delete=models.CASCADE,
+        related_name="report"
+    )
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    summary = models.TextField(blank=True)
+    key_points = models.TextField(blank=True)
+    tactical_notes = models.TextField(blank=True)
+    generated_at = models.DateTimeField(auto_now=True)
+    is_auto_generated = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["-generated_at"]
+
+    def __str__(self):
+        return self.title

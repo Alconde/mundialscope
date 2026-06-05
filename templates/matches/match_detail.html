@@ -87,6 +87,34 @@
         </div>
     </div>
 </section>
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Informe automático</h2>
+    </div>
+
+    {% if match_report %}
+        <div class="report-block">
+            <h3>{{ match_report.title }}</h3>
+
+            <div class="report-section">
+                <h4>Resumen</h4>
+                <p>{{ match_report.summary|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Puntos clave</h4>
+                <p>{{ match_report.key_points|linebreaksbr }}</p>
+            </div>
+
+            <div class="report-section">
+                <h4>Notas tácticas iniciales</h4>
+                <p>{{ match_report.tactical_notes|linebreaksbr }}</p>
+            </div>
+        </div>
+    {% else %}
+        <p>El informe automático se generará cuando el partido esté finalizado.</p>
+    {% endif %}
+</section>
 <section class="card">
     <h2>Cronología del partido</h2>
 
