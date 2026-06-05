@@ -6,7 +6,12 @@ from matches.models import Match, Tournament
 from players.models import Player
 from teams.models import Team
 from matches.services import build_group_standings
-
+from matches.analytics_services import (
+    get_top_scorers,
+    get_top_carded_players,
+    get_most_eventful_matches,
+    get_events_summary,
+)
 
 def home(request):
     now = timezone.now()
@@ -48,6 +53,10 @@ def home(request):
     ).order_by("-player_count", "name")[:5]
 
     group_standings = build_group_standings()
+    top_scorers = get_top_scorers(limit=5)
+    top_carded_players = get_top_carded_players(limit=5)
+    most_eventful_matches = get_most_eventful_matches(limit=5)
+    events_summary = get_events_summary()
 
     context = {
         "active_tournament": active_tournament,
@@ -62,6 +71,10 @@ def home(request):
         "top_ranked_teams": top_ranked_teams,
         "top_squads": top_squads,
         "group_standings": group_standings,
+        "top_scorers": top_scorers,
+        "top_carded_players": top_carded_players,
+        "most_eventful_matches": most_eventful_matches,
+        "events_summary": events_summary,
     }
 
     return render(request, "core/home.html", context)

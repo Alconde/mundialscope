@@ -197,4 +197,96 @@
         <p>Todavía no hay clasificación disponible.</p>
     {% endif %}
 </section>
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Resumen de eventos del torneo</h2>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <span>Eventos totales</span>
+            <strong>{{ events_summary.total_events }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>Goles</span>
+            <strong>{{ events_summary.total_goals }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>Tarjetas</span>
+            <strong>{{ events_summary.total_cards }}</strong>
+        </div>
+        <div class="stat-box">
+            <span>Eventos clave</span>
+            <strong>{{ events_summary.total_key_events }}</strong>
+        </div>
+    </div>
+</section>
+<section class="content-grid dashboard-secondary-grid">
+    <div class="card">
+        <h2>Máximos goleadores</h2>
+        {% if top_scorers %}
+            <ol class="ranking-list">
+                {% for player in top_scorers %}
+                    <li>
+                        <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        <span>
+                            {{ player.team.name|default:"Sin selección" }} · {{ player.goals }} goles
+                        </span>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>Todavía no hay goleadores registrados.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Jugadores más amonestados</h2>
+        {% if top_carded_players %}
+            <ol class="ranking-list">
+                {% for player in top_carded_players %}
+                    <li>
+                        <strong>{{ player.first_name }} {{ player.last_name }}</strong>
+                        <span>
+                            {{ player.team.name|default:"Sin selección" }} · {{ player.total_cards }} tarjetas
+                            ({{ player.yellow_cards }} amarillas, {{ player.red_cards }} rojas)
+                        </span>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>Todavía no hay tarjetas registradas.</p>
+        {% endif %}
+    </div>
+</section>
+<section class="card standings-section">
+    <div class="section-header">
+        <h2>Partidos con más acción</h2>
+    </div>
+
+    {% if most_eventful_matches %}
+        <ul class="match-list detailed">
+            {% for match in most_eventful_matches %}
+                <li>
+                    <a class="match-row-link" href="{% url 'matches:match-page-detail' match.pk %}">
+                        <div>
+                            <strong>{{ match.home_team.name }} vs {{ match.away_team.name }}</strong><br>
+                            <span>
+                                {{ match.match_date|date:"d/m/Y H:i" }} · {{ match.stage }} · {{ match.city }}
+                            </span>
+                        </div>
+                        <div class="match-meta">
+                            <span class="status-badge">{{ match.key_events }} clave</span>
+                            <span class="score-inline">
+                                {{ match.total_events }} eventos · {{ match.goals }} goles · {{ match.cards }} tarjetas
+                            </span>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Todavía no hay partidos con eventos suficientes para mostrar este ranking.</p>
+    {% endif %}
+</section>
 {% endblock %}

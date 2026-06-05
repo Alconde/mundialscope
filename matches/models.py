@@ -77,8 +77,6 @@ class Match(models.Model):
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
     
-from django.db import models
-
 
 class MatchEvent(models.Model):
     class EventType(models.TextChoices):

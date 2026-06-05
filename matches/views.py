@@ -5,12 +5,19 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Tournament, Match
+from .models import Tournament, Match, MatchEvent
 from .serializers import TournamentSerializer, MatchSerializer
 from teams.models import Team
 from players.models import Player
 from django.views.generic import TemplateView
 from .services import build_group_standings
+from .analytics_services import (
+    get_top_scorers,
+    get_top_carded_players,
+    get_most_eventful_matches,
+    get_events_summary,
+)
+
 
 
 class TournamentListAPIView(generics.ListAPIView):
@@ -139,6 +146,30 @@ class MatchDetailPageView(DetailView):
         ).prefetch_related(
             "events",
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        events = self.object.events.all()
+
+        goal_types = [
+            MatchEvent.EventType.GOAL,
+            MatchEvent.EventType.PENALTY_GOAL,
+            MatchEvent.EventType.OWN_GOAL,
+        ]
+        card_types = [
+            MatchEvent.EventType.YELLOW_CARD,
+            MatchEvent.EventType.RED_CARD,
+            MatchEvent.EventType.SECOND_YELLOW_RED,
+        ]
+
+        context["event_stats"] = {
+            "total_events": events.count(),
+            "goals": events.filter(event_type__in=goal_types).count(),
+            "cards": events.filter(event_type__in=card_types).count(),
+            "key_events": events.filter(is_key_event=True).count(),
+            "substitutions": events.filter(event_type=MatchEvent.EventType.SUBSTITUTION).count(),
+        }
+        return context
 class GroupStandingsPageView(TemplateView):
     template_name = "matches/group_standings.html"
 
