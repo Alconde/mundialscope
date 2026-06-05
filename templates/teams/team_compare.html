@@ -49,6 +49,18 @@
         </div>
     </section>
 
+    <section class="content-grid compare-charts-grid">
+        <div class="card">
+            <h2>Comparación por métricas</h2>
+            <div id="comparison-bar-chart" class="chart-box"></div>
+        </div>
+
+        <div class="card">
+            <h2>Radar comparativo</h2>
+            <div id="comparison-radar-chart" class="chart-box"></div>
+        </div>
+    </section>
+
     <section class="card standings-section">
         <div class="section-header">
             <h2>Tabla comparativa</h2>
@@ -78,26 +90,101 @@
         <div class="card">
             <h2>Lectura rápida: {{ comparison.team_a_stats.team.name }}</h2>
             <ul class="team-list">
-                <li><strong>Puntos </strong><span>{{ comparison.team_a_stats.points }}</span></li>
-                <li><strong>Diferencia de goles </strong><span>{{ comparison.team_a_stats.goal_difference }}</span></li>
-                <li><strong>Promedio GF </strong><span>{{ comparison.team_a_stats.avg_goals_for }}</span></li>
-                <li><strong>Eventos clave </strong><span>{{ comparison.team_a_stats.key_events }}</span></li>
+                <li><strong>Puntos</strong><span>{{ comparison.team_a_stats.points }}</span></li>
+                <li><strong>Diferencia de goles</strong><span>{{ comparison.team_a_stats.goal_difference }}</span></li>
+                <li><strong>Promedio GF</strong><span>{{ comparison.team_a_stats.avg_goals_for }}</span></li>
+                <li><strong>Eventos clave</strong><span>{{ comparison.team_a_stats.key_events }}</span></li>
             </ul>
         </div>
 
         <div class="card">
             <h2>Lectura rápida: {{ comparison.team_b_stats.team.name }}</h2>
             <ul class="team-list">
-                <li><strong>Puntos </strong><span>{{ comparison.team_b_stats.points }}</span></li>
-                <li><strong>Diferencia de goles </strong><span>{{ comparison.team_b_stats.goal_difference }}</span></li>
-                <li><strong>Promedio GF </strong><span>{{ comparison.team_b_stats.avg_goals_for }}</span></li>
-                <li><strong>Eventos clave </strong><span>{{ comparison.team_b_stats.key_events }}</span></li>
+                <li><strong>Puntos</strong><span>{{ comparison.team_b_stats.points }}</span></li>
+                <li><strong>Diferencia de goles</strong><span>{{ comparison.team_b_stats.goal_difference }}</span></li>
+                <li><strong>Promedio GF</strong><span>{{ comparison.team_b_stats.avg_goals_for }}</span></li>
+                <li><strong>Eventos clave</strong><span>{{ comparison.team_b_stats.key_events }}</span></li>
             </ul>
         </div>
     </section>
+
+    {{ comparison.bar_chart|json_script:"bar-chart-data" }}
+    {{ comparison.radar_chart|json_script:"radar-chart-data" }}
 {% else %}
     <section class="card">
         <p>Selecciona dos equipos para generar la comparación.</p>
     </section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if comparison %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+    const barChartData = JSON.parse(document.getElementById("bar-chart-data").textContent);
+    const radarChartData = JSON.parse(document.getElementById("radar-chart-data").textContent);
+
+    const barTraceA = {
+        x: barChartData.categories,
+        y: barChartData.team_a_values,
+        name: barChartData.team_a_name,
+        type: "bar"
+    };
+
+    const barTraceB = {
+        x: barChartData.categories,
+        y: barChartData.team_b_values,
+        name: barChartData.team_b_name,
+        type: "bar"
+    };
+
+    const barLayout = {
+        barmode: "group",
+        paper_bgcolor: "white",
+        plot_bgcolor: "white",
+        margin: { t: 20, r: 10, b: 60, l: 40 },
+        legend: { orientation: "h", y: 1.12, x: 0.5, xanchor: "center" },
+        xaxis: { title: "Métricas" },
+        yaxis: { title: "Valor" }
+    };
+
+    Plotly.newPlot("comparison-bar-chart", [barTraceA, barTraceB], barLayout, {
+        responsive: true,
+        displayModeBar: false
+    });
+
+    const radarTraceA = {
+        type: "scatterpolar",
+        r: [...radarChartData.team_a_values, radarChartData.team_a_values[0]],
+        theta: [...radarChartData.categories, radarChartData.categories[0]],
+        fill: "toself",
+        name: radarChartData.team_a_name
+    };
+
+    const radarTraceB = {
+        type: "scatterpolar",
+        r: [...radarChartData.team_b_values, radarChartData.team_b_values[0]],
+        theta: [...radarChartData.categories, radarChartData.categories[0]],
+        fill: "toself",
+        name: radarChartData.team_b_name
+    };
+
+    const radarLayout = {
+        paper_bgcolor: "white",
+        plot_bgcolor: "white",
+        margin: { t: 20, r: 20, b: 20, l: 20 },
+        legend: { orientation: "h", y: 1.1, x: 0.5, xanchor: "center" },
+        polar: {
+            radialaxis: {
+                visible: true
+            }
+        }
+    };
+
+    Plotly.newPlot("comparison-radar-chart", [radarTraceA, radarTraceB], radarLayout, {
+        responsive: true,
+        displayModeBar: false
+    });
+</script>
 {% endif %}
 {% endblock %}

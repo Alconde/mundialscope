@@ -698,3 +698,23 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+.compare-charts-grid {
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 24px;
+}
+
+.chart-box {
+    width: 100%;
+    min-height: 380px;
+}
+
+@media (max-width: 900px) {
+    .compare-charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-box {
+        min-height: 320px;
+    }
+}

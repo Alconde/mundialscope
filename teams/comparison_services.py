@@ -114,8 +114,54 @@ def build_team_comparison(team_a, team_b):
         ("Eventos clave", stats_a["key_events"], stats_b["key_events"]),
     ]
 
+    bar_chart = {
+        "categories": ["Puntos", "Victorias", "GF", "DG", "Tarjetas", "Eventos clave"],
+        "team_a_name": stats_a["team"].name,
+        "team_b_name": stats_b["team"].name,
+        "team_a_values": [
+            stats_a["points"],
+            stats_a["wins"],
+            stats_a["goals_for"],
+            stats_a["goal_difference"],
+            stats_a["cards"],
+            stats_a["key_events"],
+        ],
+        "team_b_values": [
+            stats_b["points"],
+            stats_b["wins"],
+            stats_b["goals_for"],
+            stats_b["goal_difference"],
+            stats_b["cards"],
+            stats_b["key_events"],
+        ],
+    }
+
+    radar_chart = {
+        "categories": ["Puntos", "Victorias", "GF", "DG", "Clave", "Convocados"],
+        "team_a_name": stats_a["team"].name,
+        "team_b_name": stats_b["team"].name,
+        "team_a_values": [
+            stats_a["points"],
+            stats_a["wins"],
+            stats_a["goals_for"],
+            max(stats_a["goal_difference"], 0),
+            stats_a["key_events"],
+            stats_a["total_players"],
+        ],
+        "team_b_values": [
+            stats_b["points"],
+            stats_b["wins"],
+            stats_b["goals_for"],
+            max(stats_b["goal_difference"], 0),
+            stats_b["key_events"],
+            stats_b["total_players"],
+        ],
+    }
+
     return {
         "team_a_stats": stats_a,
         "team_b_stats": stats_b,
         "comparison_rows": comparison_rows,
+        "bar_chart": bar_chart,
+        "radar_chart": radar_chart,
     }
