@@ -3,8 +3,10 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'cambia-esto-mas-adelante'
-DEBUG = True
+SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-dev-key")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+FOOTBALL_DATA_API_KEY = os.environ.get("FOOTBALL_DATA_API_KEY", "")
 
 ALLOWED_HOSTS = []
 
