@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Chat de análisis | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="/">← Volver al dashboard</a>
+    <h1>Chat interno de análisis del Mundial</h1>
+    <p class="hero-text">
+        Crea conversaciones para plantear preguntas tácticas sobre partidos, selecciones y tendencias del torneo.
+    </p>
+</section>
+
+<section class="card">
+    <div class="section-header">
+        <h2>Conversaciones</h2>
+        <a class="btn-primary" href="{% url 'chat:chat-detail' conversation.pk %}"
+           onclick="event.preventDefault(); document.getElementById('new-chat-form').submit();">
+            Nueva conversación
+        </a>
+    </div>
+
+    {% if conversations %}
+        <ul class="player-list">
+            {% for conversation in conversations %}
+                <li>
+                    <a href="{% url 'chat:chat-detail' conversation.pk %}">
+                        <strong>{{ conversation.title|default:"Conversación sin título" }}</strong><br>
+                        <span>Creada el {{ conversation.created_at|date:"d/m/Y H:i" }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay conversaciones todavía.</p>
+    {% endif %}
+</section>
+
+<form id="new-chat-form" method="post" action="{% url 'chat:chat-list' %}">
+    {% csrf_token %}
+    <input type="hidden" name="new_chat" value="1">
+</form>
+{% endblock %}

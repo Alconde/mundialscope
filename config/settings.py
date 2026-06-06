@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'players',
     'matches',
     'analytics',
+    "chat",
 ]
 
 MIDDLEWARE = [

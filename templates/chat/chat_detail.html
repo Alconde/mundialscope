@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Chat | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a class="back-link" href="{% url 'chat:chat-list' %}">← Volver a conversaciones</a>
+    <h1>{{ conversation.title|default:"Chat de análisis" }}</h1>
+    <p class="hero-text">
+        Pregunta al asistente sobre el Mundial, las selecciones y los partidos registrados en la plataforma.
+    </p>
+</section>
+
+<section class="card chat-thread">
+    <div class="chat-messages">
+        {% for message in conversation.messages.all %}
+            <div class="chat-message chat-message-{{ message.sender }}">
+                <div class="chat-message-meta">
+                    <span class="chat-sender">
+                        {% if message.sender == "user" %}Tú{% else %}Asistente IA{% endif %}
+                    </span>
+                    <span class="chat-timestamp">
+                        {{ message.created_at|date:"d/m/Y H:i" }}
+                    </span>
+                </div>
+                <div class="chat-message-content">
+                    {{ message.content|linebreaksbr }}
+                </div>
+            </div>
+        {% empty %}
+            <p>No hay mensajes en esta conversación. Haz tu primera pregunta.</p>
+        {% endfor %}
+    </div>
+
+    <form method="post" class="chat-form">
+        {% csrf_token %}
+        {{ form.question }}
+        <button type="submit" class="btn-primary chat-send-btn">Enviar</button>
+    </form>
+</section>
+{% endblock %}
