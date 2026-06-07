@@ -65,7 +65,7 @@
             {% for team in dashboard.top_scoring_teams %}
                 <li>
                     <strong>
-                        <a href="{% url 'teams:team-page-detail' team.pk %}">{{ team.name }}</a>
+                        <a href="{% url 'teams:team-detail' team.pk %}">{{ team.name }}</a>
                     </strong>
                     <span>{{ team.goals }} goles · {{ team.key_events }} eventos clave</span>
                 </li>
@@ -81,7 +81,7 @@
             {% for team in dashboard.most_disciplined_teams %}
                 <li>
                     <strong>
-                        <a href="{% url 'teams:team-page-detail' team.pk %}">{{ team.name }}</a>
+                        <a href="{% url 'teams:team-detail' team.pk %}">{{ team.name }}</a>
                     </strong>
                     <span>{{ team.cards }} tarjetas</span>
                 </li>
@@ -108,7 +108,7 @@
             {% for team in dashboard.least_disciplined_teams %}
                 <tr>
                     <td>
-                        <a href="{% url 'teams:team-page-detail' team.pk %}">{{ team.name }}</a>
+                        <a href="{% url 'teams:team-detail' team.pk %}">{{ team.name }}</a>
                     </td>
                     <td>{{ team.cards }}</td>
                 </tr>

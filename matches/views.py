@@ -4,7 +4,6 @@ from django.views.generic import ListView, DetailView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .models import Tournament, Match, MatchEvent
 from .serializers import TournamentSerializer, MatchSerializer
 from teams.models import Team
@@ -17,9 +16,9 @@ from .analytics_services import (
     get_events_summary,
 )
 from .report_services import generate_match_report
-
 from django.views.generic import ListView, DetailView, TemplateView
 from .tactical_dashboard_services import get_tournament_tactical_dashboard
+from matches.dashboard_services import get_dashboard_context
 
 
 class TournamentListAPIView(generics.ListAPIView):
@@ -193,4 +192,13 @@ class TournamentTacticalDashboardView(TemplateView):
         context = super().get_context_data(**kwargs)
         dashboard = get_tournament_tactical_dashboard()
         context["dashboard"] = dashboard
+        return context
+    
+
+class WorldCupDashboardView(TemplateView):
+    template_name = "matches/world_cup_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_dashboard_context())
         return context

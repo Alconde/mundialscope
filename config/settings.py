@@ -5,9 +5,11 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / ".env")
+DEBUG=True
+
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-dev-key")
-DEBUG = os.environ.get("DEBUG", "False").strip().lower() == "true"
+
 
 FOOTBALL_DATA_API_KEY = os.environ.get("FOOTBALL_DATA_API_KEY", "")
 FOOTBALL_DATA_BASE_URL = os.environ.get("FOOTBALL_DATA_BASE_URL", "https://api.football-data.org/v4")

@@ -1,91 +1,72 @@
 {% extends "base.html" %}
 
-{% block title %}{{ player.first_name }} {{ player.last_name }} | MundialScope{% endblock %}
+{% block title %}{{ player.full_name }} | MundialScope{% endblock %}
 
 {% block content %}
 <section class="page-header">
-    <a class="back-link" href="{% url 'players:player-page-list' %}">← Volver a jugadores</a>
-    <h1>{{ player.first_name }} {{ player.last_name }}</h1>
+    <a class="back-link" href="{% url 'players:player-list' %}">← Volver a jugadores</a>
+    <h1>{{ player.full_name }}</h1>
     <p class="hero-text">
-        {{ player.team.name|default:"Sin selección" }} · {{ player.position }}
-        {% if player.club %} · {{ player.club }}{% endif %}
+        {{ player.team.name }} · {{ player.get_position_display }} · #{{ player.shirt_number|default:"-" }}
     </p>
 </section>
 
-<section class="kpi-grid team-kpis">
-    <article class="card kpi-card">
-        <span class="kpi-label">Posición</span>
-        <strong class="kpi-value small">{{ player.position }}</strong>
-    </article>
-    <article class="card kpi-card">
-        <span class="kpi-label">Dorsal</span>
-        <strong class="kpi-value">{{ player.shirt_number|default:"-" }}</strong>
-    </article>
-    <article class="card kpi-card">
-        <span class="kpi-label">Edad</span>
-        <strong class="kpi-value">{{ player.age|default:"-" }}</strong>
-    </article>
-    <article class="card kpi-card">
-        <span class="kpi-label">Convocado</span>
-        <strong class="kpi-value small">
-            {% if player.is_called_up %}Sí{% else %}No{% endif %}
-        </strong>
-    </article>
-</section>
-
-<section class="card standings-section">
-    <div class="section-header">
-        <h2>Resumen de rendimiento</h2>
-    </div>
-
-    <div class="stats-grid">
-        <div class="stat-box">
-            <span>Goles</span>
-            <strong>{{ player_stats.goals }}</strong>
-        </div>
-        <div class="stat-box">
-            <span>Amarillas</span>
-            <strong>{{ player_stats.yellow_cards }}</strong>
-        </div>
-        <div class="stat-box">
-            <span>Rojas</span>
-            <strong>{{ player_stats.red_cards }}</strong>
-        </div>
-        <div class="stat-box">
-            <span>Eventos clave</span>
-            <strong>{{ player_stats.key_events }}</strong>
-        </div>
-    </div>
-</section>
-
-<section class="content-grid team-detail-grid">
+<section class="content-grid">
     <div class="card">
-        <h2>Ficha del jugador</h2>
+        <h2>Perfil</h2>
         <ul class="team-list">
-            <li><strong>Selección: </strong><span><a href="{% url 'teams:team-page-detail' player.team.pk %}">{{ player.team.name }}</a></span></li>
-            <li><strong>Club: </strong><span>{{ player.club|default:"No disponible" }}</span></li>
-            <li><strong>Posición: </strong><span>{{ player.position }}</span></li>
-            <li><strong>Valor de mercado: </strong><span>{{ player.market_value|default:"No disponible" }}</span></li>
+            <li><strong>Club</strong><span>{{ player.club|default:"-" }}</span></li>
+            <li><strong>Edad</strong><span>{{ player.date_of_birth|date:"d/m/Y"|default:"-" }}</span></li>
+            <li><strong>Internacionalidades</strong><span>{{ player.caps }}</span></li>
+            <li><strong>Goles</strong><span>{{ player.international_goals }}</span></li>
+            <li><strong>Pie dominante</strong><span>{{ player.get_preferred_foot_display|default:"-" }}</span></li>
+            <li><strong>Altura</strong><span>{{ player.height_cm|default:"-" }}</span></li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>Eventos recientes</h2>
-        {% if player_stats.recent_events %}
-            <ul class="player-list">
-                {% for event in player_stats.recent_events %}
-                    <li>
-                        <strong>{{ event.get_event_type_display }}</strong><br>
-                        <span>
-                            {{ event.match.home_team.name }} vs {{ event.match.away_team.name }}
-                            · {{ event.minute }}{% if event.extra_minute %}+{{ event.extra_minute }}{% endif %}'
-                        </span>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No hay eventos registrados para este jugador.</p>
-        {% endif %}
+        <h2>Contexto competitivo</h2>
+        <ul class="team-list">
+            <li><strong>Selección</strong><span><a href="{% url 'teams:team-detail' player.team.pk %}">{{ player.team.name }}</a></span></li>
+            <li><strong>Convocado</strong><span>{% if player.is_called_up %}Sí{% else %}No{% endif %}</span></li>
+            <li><strong>Posición</strong><span>{{ player.get_position_display }}</span></li>
+            <li><strong>Valor mercado</strong><span>{{ player.market_value|default:"-" }}</span></li>
+        </ul>
     </div>
+</section>
+
+<section class="card">
+    <div class="section-header">
+        <h2>Eventos recientes</h2>
+    </div>
+
+    <table class="standings-table">
+        <thead>
+            <tr>
+                <th>Partido</th>
+                <th>Minuto</th>
+                <th>Evento</th>
+                <th>Equipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in recent_events %}
+                <tr>
+                    <td>
+                        <a href="{% url 'matches:match-page-detail' event.match.pk %}">
+                            {{ event.match.home_team.name }} vs {{ event.match.away_team.name }}
+                        </a>
+                    </td>
+                    <td>{{ event.minute }}{% if event.extra_minute %}+{{ event.extra_minute }}{% endif %}'</td>
+                    <td>{{ event.get_event_type_display }}</td>
+                    <td>{{ event.team.name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No hay eventos recientes para este jugador.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </section>
 {% endblock %}

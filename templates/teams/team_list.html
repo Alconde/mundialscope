@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Selecciones | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Selecciones del Mundial</h1>
+    <p class="hero-text">Explora las selecciones, su grupo, ranking y acceso a análisis detallado.</p>
+</section>
+
+<section class="card">
+    <div class="team-grid">
+        {% for team in teams %}
+            <a class="team-card" href="{% url 'teams:team-detail' team.pk %}">
+                <h2>{{ team.name }}</h2>
+                <p>{{ team.fifa_code }} · {{ team.confederation }} · Grupo {{ team.group|default:"-" }}</p>
+                <p>Ranking FIFA: {{ team.fifa_ranking|default:"-" }}</p>
+            </a>
+        {% empty %}
+            <p>No hay selecciones cargadas.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

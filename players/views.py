@@ -25,26 +25,24 @@ class PlayerListPageView(ListView):
     model = Player
     template_name = "players/player_list.html"
     context_object_name = "players"
-    paginate_by = 12
+    paginate_by = 20
 
     def get_queryset(self):
-        queryset = Player.objects.select_related("team").all().order_by("last_name", "first_name")
+        queryset = (
+            Player.objects.select_related("team")
+            .filter(is_called_up=True)
+            .order_by("team__name", "position", "last_name", "first_name")
+        )
 
-        team = self.request.GET.get("team")
+        team_id = self.request.GET.get("team")
         position = self.request.GET.get("position")
-        called_up = self.request.GET.get("called_up")
-        search = self.request.GET.get("search")
+        search = self.request.GET.get("q")
 
-        if team:
-            queryset = queryset.filter(team_id=team)
+        if team_id:
+            queryset = queryset.filter(team_id=team_id)
 
         if position:
             queryset = queryset.filter(position=position)
-
-        if called_up == "yes":
-            queryset = queryset.filter(is_called_up=True)
-        elif called_up == "no":
-            queryset = queryset.filter(is_called_up=False)
 
         if search:
             queryset = queryset.filter(
@@ -53,8 +51,6 @@ class PlayerListPageView(ListView):
                 last_name__icontains=search
             ) | queryset.filter(
                 club__icontains=search
-            ) | queryset.filter(
-                team__name__icontains=search
             )
 
         return queryset
@@ -62,11 +58,10 @@ class PlayerListPageView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["teams"] = Team.objects.filter(is_active=True).order_by("name")
+        context["positions"] = Player.Position.choices
         context["selected_team"] = self.request.GET.get("team", "")
         context["selected_position"] = self.request.GET.get("position", "")
-        context["selected_called_up"] = self.request.GET.get("called_up", "")
-        context["search_value"] = self.request.GET.get("search", "")
-        context["position_choices"] = Player.Position.choices
+        context["search_query"] = self.request.GET.get("q", "")
         return context
 
 
@@ -75,10 +70,10 @@ class PlayerDetailPageView(DetailView):
     template_name = "players/player_detail.html"
     context_object_name = "player"
 
-    def get_queryset(self):
-        return Player.objects.select_related("team").prefetch_related("match_events")
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["player_stats"] = build_player_stats(self.object)
+        player = self.object
+        context["recent_events"] = player.match_events.select_related(
+            "match", "team"
+        ).order_by("-created_at")[:10]
         return context

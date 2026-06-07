@@ -93,7 +93,7 @@
             <ul class="team-list">
                 {% for team in featured_teams %}
                     <li>
-                        <a href="{% url 'teams:team-page-detail' team.pk %}">
+                        <a href="{% url 'teams:team-detail' team.pk %}">
                             <strong>{{ team.name }}</strong>
                             <span>{{ team.confederation }} · Grupo {{ team.group }}</span>
                         </a>
@@ -181,7 +181,7 @@
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
                                     <td>
-                                        <a href="{% url 'teams:team-page-detail' row.team.pk %}">
+                                        <a href="{% url 'teams:team-detail' row.team.pk %}">
                                             {{ row.team.name }}
                                         </a>
                                     </td>
@@ -230,7 +230,7 @@
             <ol class="ranking-list">
                 {% for player in top_scorers %}
                     <li>
-                        <a href="{% url 'players:player-page-detail' player.pk %}">
+                        <a href="{% url 'players:player-detail' player.pk %}">
                             <strong>{{ player.first_name }} {{ player.last_name }}</strong>
                         </a>
                         <span>
@@ -250,7 +250,7 @@
             <ol class="ranking-list">
                 {% for player in top_carded_players %}
                     <li>
-                        <a href="{% url 'players:player-page-detail' player.pk %}">
+                        <a href="{% url 'players:player-detail' player.pk %}">
                             <strong>{{ player.first_name }} {{ player.last_name }}</strong>
                         </a>
                         <span>
