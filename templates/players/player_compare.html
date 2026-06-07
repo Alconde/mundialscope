@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Comparar jugadores | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Comparador de jugadores</h1>
+    <p class="hero-text">Contrasta perfiles internacionales de forma rápida.</p>
+</section>
+
+<section class="card filters-card">
+    <form method="get" class="compare-form">
+        {{ form.as_p }}
+        <div class="filter-actions">
+            <button type="submit" class="btn-primary">Comparar</button>
+        </div>
+    </form>
+</section>
+
+{% if comparison %}
+<section class="card">
+    <div class="comparison-header">
+        <div>
+            <h2>{{ comparison.player_a.first_name }} {{ comparison.player_a.last_name }}</h2>
+            <p>{{ comparison.player_a.team.name }}</p>
+        </div>
+        <div>
+            <h2>{{ comparison.player_b.first_name }} {{ comparison.player_b.last_name }}</h2>
+            <p>{{ comparison.player_b.team.name }}</p>
+        </div>
+    </div>
+
+    <table class="standings-table">
+        <thead>
+            <tr>
+                <th>{{ comparison.player_a.last_name }}</th>
+                <th>Métrica</th>
+                <th>{{ comparison.player_b.last_name }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in comparison.metrics %}
+                <tr>
+                    <td>{{ item.a }}</td>
+                    <td>{{ item.label }}</td>
+                    <td>{{ item.b }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+{% endblock %}

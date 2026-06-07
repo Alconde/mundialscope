@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Rankings de jugadores | MundialScope{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Rankings de jugadores</h1>
+    <p class="hero-text">Ordena perfiles por posición y criterio.</p>
+</section>
+
+<section class="card filters-card">
+    <form method="get" class="compare-form">
+        <div class="filter-group">
+            <label for="position">Posición</label>
+            <select name="position" id="position">
+                <option value="">Todas</option>
+                {% for value, label in positions %}
+                    <option value="{{ value }}" {% if selected_position == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="order">Ordenar por</label>
+            <select name="order" id="order">
+                <option value="last_name" {% if selected_order == "last_name" %}selected{% endif %}>Apellido</option>
+                <option value="shirt_number" {% if selected_order == "shirt_number" %}selected{% endif %}>Dorsal</option>
+                <option value="club" {% if selected_order == "club" %}selected{% endif %}>Club</option>
+                <option value="market_value" {% if selected_order == "market_value" %}selected{% endif %}>Valor de mercado</option>
+                <option value="caps" {% if selected_order == "caps" %}selected{% endif %}>Internacionalidades</option>
+                <option value="international_goals" {% if selected_order == "international_goals" %}selected{% endif %}>Goles internacionales</option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn-primary">Aplicar</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <table class="standings-table">
+        <thead>
+            <tr>
+                <th>Jugador</th>
+                <th>Selección</th>
+                <th>Posición</th>
+                <th>Club</th>
+                <th>Dorsal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+                <tr>
+                    <td><a href="{% url 'players:player-detail' player.pk %}">{{ player.first_name }} {{ player.last_name }}</a></td>
+                    <td>{{ player.team.name }}</td>
+                    <td>{{ player.get_position_display }}</td>
+                    <td>{{ player.club|default:"-" }}</td>
+                    <td>{{ player.shirt_number|default:"-" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No hay jugadores disponibles para este filtro.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
