@@ -1,4 +1,5 @@
-from matches.models import Match
+from django.db.models import Q
+from matches.models import Match, MatchEvent
 
 
 def get_team_matches_queryset(team):
@@ -69,4 +70,74 @@ def build_team_stats(team):
         "recent_form": recent_form,
         "last_matches": finished_matches[:5],
         "upcoming_matches": sorted(upcoming_matches, key=lambda m: m.match_date)[:5],
+    }
+
+
+def get_team_dashboard_kpis(team):
+    matches_qs = Match.objects.filter(
+        Q(home_team=team) | Q(away_team=team)
+    ).distinct()
+
+    total_matches = matches_qs.count()
+
+    wins = 0
+    draws = 0
+    losses = 0
+    goals_for = 0
+    goals_against = 0
+
+    recent_matches = matches_qs.order_by("-match_date")[:5]
+
+    for match in matches_qs:
+        if match.home_team_id == team.id:
+            gf = match.home_score
+            ga = match.away_score
+        else:
+            gf = match.away_score
+            ga = match.home_score
+
+        goals_for += gf
+        goals_against += ga
+
+        if gf > ga:
+            wins += 1
+        elif gf == ga:
+            draws += 1
+        else:
+            losses += 1
+
+    yellow_cards = MatchEvent.objects.filter(
+        team=team,
+        event_type=MatchEvent.EventType.YELLOW_CARD
+    ).count()
+
+    red_cards = MatchEvent.objects.filter(
+        team=team,
+        event_type__in=[
+            MatchEvent.EventType.RED_CARD,
+            MatchEvent.EventType.SECOND_YELLOW_RED,
+        ]
+    ).count()
+
+    goals_scored_events = MatchEvent.objects.filter(
+        team=team,
+        event_type__in=[
+            MatchEvent.EventType.GOAL,
+            MatchEvent.EventType.PENALTY_GOAL,
+            MatchEvent.EventType.OWN_GOAL,
+        ]
+    ).count()
+
+    return {
+        "total_matches": total_matches,
+        "wins": wins,
+        "draws": draws,
+        "losses": losses,
+        "goals_for": goals_for,
+        "goals_against": goals_against,
+        "goal_difference": goals_for - goals_against,
+        "yellow_cards": yellow_cards,
+        "red_cards": red_cards,
+        "goals_scored_events": goals_scored_events,
+        "recent_matches": recent_matches,
     }

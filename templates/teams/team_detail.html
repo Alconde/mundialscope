@@ -11,20 +11,49 @@
     </p>
 </section>
 
+<section class="kpi-grid">
+    <div class="card kpi-card">
+        <span class="kpi-label">Partidos</span>
+        <strong class="kpi-value">{{ total_matches }}</strong>
+    </div>
+    <div class="card kpi-card">
+        <span class="kpi-label">Victorias</span>
+        <strong class="kpi-value">{{ wins }}</strong>
+    </div>
+    <div class="card kpi-card">
+        <span class="kpi-label">Empates</span>
+        <strong class="kpi-value">{{ draws }}</strong>
+    </div>
+    <div class="card kpi-card">
+        <span class="kpi-label">Derrotas</span>
+        <strong class="kpi-value">{{ losses }}</strong>
+    </div>
+    <div class="card kpi-card">
+        <span class="kpi-label">Goles a favor</span>
+        <strong class="kpi-value">{{ goals_for }}</strong>
+    </div>
+    <div class="card kpi-card">
+        <span class="kpi-label">Diferencia de gol</span>
+        <strong class="kpi-value">{{ goal_difference }}</strong>
+    </div>
+</section>
+
 <section class="content-grid">
     <div class="card">
-        <h2>Perfil general</h2>
+        <h2>Perfil competitivo</h2>
         <ul class="team-list">
             <li><strong>Seleccionador</strong><span>{{ team.coach|default:"-" }}</span></li>
             <li><strong>Ranking FIFA</strong><span>{{ team.fifa_ranking|default:"-" }}</span></li>
-            <li><strong>Convocados</strong><span>{{ player_count }}</span></li>
-            <li><strong>Activa</strong><span>{% if team.is_active %}Sí{% else %}No{% endif %}</span></li>
+            <li><strong>Goles en eventos</strong><span>{{ goals_scored_events }}</span></li>
+            <li><strong>Amarillas</strong><span>{{ yellow_cards }}</span></li>
+            <li><strong>Rojas</strong><span>{{ red_cards }}</span></li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>Distribución por posiciones</h2>
+        <h2>Plantilla convocada</h2>
         <ul class="team-list">
+            <li><strong>Total</strong><span>{{ player_count }}</span></li>
             <li><strong>Porteros</strong><span>{{ goalkeepers }}</span></li>
             <li><strong>Defensas</strong><span>{{ defenders }}</span></li>
             <li><strong>Centrocampistas</strong><span>{{ midfielders }}</span></li>
@@ -35,44 +64,7 @@
 
 <section class="card">
     <div class="section-header">
-        <h2>Plantilla convocada</h2>
-        <a href="{% url 'teams:team-compare' %}">Comparar selecciones</a>
-    </div>
-
-    <table class="standings-table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Jugador</th>
-                <th>Posición</th>
-                <th>Club</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for player in players %}
-                <tr>
-                    <td>{{ player.shirt_number|default:"-" }}</td>
-                    <td>
-                        <a href="{% url 'players:player-detail' player.pk %}">
-                            {{ player.full_name }}
-                        </a>
-                    </td>
-                    <td>{{ player.get_position_display }}</td>
-                    <td>{{ player.club|default:"-" }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">No hay jugadores cargados para esta selección.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</section>
-
-<section class="card">
-    <div class="section-header">
         <h2>Últimos partidos</h2>
-        <a href="{% url 'matches:match-page-list' %}">Ver todos los partidos</a>
     </div>
 
     <div class="match-list">
@@ -91,5 +83,40 @@
             <p>No hay partidos disponibles.</p>
         {% endfor %}
     </div>
+</section>
+
+<section class="card">
+    <div class="section-header">
+        <h2>Plantilla</h2>
+    </div>
+
+    <table class="standings-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Posición</th>
+                <th>Club</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+                <tr>
+                    <td>{{ player.shirt_number|default:"-" }}</td>
+                    <td>
+                        <a href="{% url 'players:player-detail' player.pk %}">
+                            {{ player.first_name }} {{ player.last_name }}
+                        </a>
+                    </td>
+                    <td>{{ player.get_position_display }}</td>
+                    <td>{{ player.club|default:"-" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No hay jugadores cargados para esta selección.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </section>
 {% endblock %}

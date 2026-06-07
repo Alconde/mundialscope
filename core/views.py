@@ -1,8 +1,6 @@
 from django.db.models import Count, Q
 from django.shortcuts import render
 from django.utils import timezone
-
-from matches.models import Match, Tournament
 from players.models import Player
 from teams.models import Team
 from matches.services import build_group_standings
@@ -12,6 +10,11 @@ from matches.analytics_services import (
     get_most_eventful_matches,
     get_events_summary,
 )
+
+from django.views.generic import TemplateView
+from matches.models import Match, MatchEvent, Tournament
+
+
 
 def home(request):
     now = timezone.now()
@@ -78,3 +81,60 @@ def home(request):
     }
 
     return render(request, "core/home.html", context)
+
+
+class HomePageView(TemplateView):
+    template_name = "core/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        active_tournament = Tournament.objects.filter(is_active=True).first()
+
+        matches = Match.objects.all()
+        if active_tournament:
+            matches = matches.filter(tournament=active_tournament)
+
+        context["active_tournament"] = active_tournament
+        context["total_teams"] = Team.objects.filter(is_active=True).count()
+        context["total_players"] = Player.objects.filter(is_called_up=True).count()
+        context["total_matches"] = matches.count()
+        context["finished_matches"] = matches.filter(status="finished").count()
+
+        context["total_goals"] = MatchEvent.objects.filter(
+            match__in=matches,
+            event_type__in=["goal", "penalty_goal", "own_goal"]
+        ).count()
+
+        context["total_cards"] = MatchEvent.objects.filter(
+            match__in=matches,
+            event_type__in=["yellow_card", "red_card", "second_yellow_red"]
+        ).count()
+
+        context["top_scoring_teams"] = (
+            Team.objects.filter(is_active=True)
+            .annotate(
+                goal_events=Count(
+                    "match_events",
+                    filter=Q(match_events__event_type__in=["goal", "penalty_goal", "own_goal"])
+                )
+            )
+            .order_by("-goal_events", "name")[:5]
+        )
+
+        context["most_disciplined_teams"] = (
+            Team.objects.filter(is_active=True)
+            .annotate(
+                card_events=Count(
+                    "match_events",
+                    filter=Q(match_events__event_type__in=["yellow_card", "red_card", "second_yellow_red"])
+                )
+            )
+            .order_by("card_events", "name")[:5]
+        )
+
+        context["latest_matches"] = matches.select_related(
+            "home_team", "away_team", "tournament"
+        ).order_by("-match_date")[:6]
+
+        return context
