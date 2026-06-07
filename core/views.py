@@ -83,6 +83,14 @@ def home(request):
     return render(request, "core/home.html", context)
 
 
+from django.views.generic import TemplateView
+from django.db.models import Count, Q
+from matches.models import Match, MatchEvent, Tournament
+from teams.models import Team
+from players.models import Player
+from .charts import build_bar_chart
+
+
 class HomePageView(TemplateView):
     template_name = "core/home.html"
 
@@ -111,7 +119,7 @@ class HomePageView(TemplateView):
             event_type__in=["yellow_card", "red_card", "second_yellow_red"]
         ).count()
 
-        context["top_scoring_teams"] = (
+        top_scoring_teams = list(
             Team.objects.filter(is_active=True)
             .annotate(
                 goal_events=Count(
@@ -122,7 +130,7 @@ class HomePageView(TemplateView):
             .order_by("-goal_events", "name")[:5]
         )
 
-        context["most_disciplined_teams"] = (
+        most_disciplined_teams = list(
             Team.objects.filter(is_active=True)
             .annotate(
                 card_events=Count(
@@ -133,8 +141,25 @@ class HomePageView(TemplateView):
             .order_by("card_events", "name")[:5]
         )
 
+        context["top_scoring_teams"] = top_scoring_teams
+        context["most_disciplined_teams"] = most_disciplined_teams
+
         context["latest_matches"] = matches.select_related(
             "home_team", "away_team", "tournament"
         ).order_by("-match_date")[:6]
+
+        context["goals_chart"] = build_bar_chart(
+            title="Goles por selección",
+            x_values=[team.name for team in top_scoring_teams],
+            y_values=[team.goal_events for team in top_scoring_teams],
+            y_axis_title="Goles",
+        )
+
+        context["cards_chart"] = build_bar_chart(
+            title="Tarjetas por selección",
+            x_values=[team.name for team in most_disciplined_teams],
+            y_values=[team.card_events for team in most_disciplined_teams],
+            y_axis_title="Tarjetas",
+        )
 
         return context
