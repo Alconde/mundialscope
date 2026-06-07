@@ -999,3 +999,23 @@ a {
 .chart-box .plot-container {
     width: 100% !important;
 }
+
+.dashboard-grid {
+    align-items: stretch;
+}
+
+.chart-box {
+    width: 100%;
+    min-height: 340px;
+}
+
+.chart-box .js-plotly-plot,
+.chart-box .plot-container {
+    width: 100% !important;
+}
+
+@media (max-width: 900px) {
+    .chart-box {
+        min-height: 300px;
+    }
+}

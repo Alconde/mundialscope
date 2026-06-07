@@ -33,8 +33,30 @@
         <strong class="kpi-value">{{ goals_for }}</strong>
     </div>
     <div class="card kpi-card">
-        <span class="kpi-label">Diferencia de gol</span>
+        <span class="kpi-label">Dif. gol</span>
         <strong class="kpi-value">{{ goal_difference }}</strong>
+    </div>
+</section>
+
+<section class="content-grid dashboard-grid">
+    <div class="card">
+        <h2>Forma reciente</h2>
+        <div id="form-chart" class="chart-box"></div>
+    </div>
+
+    <div class="card">
+        <h2>Balance goleador</h2>
+        <div id="goals-chart" class="chart-box"></div>
+    </div>
+
+    <div class="card">
+        <h2>Distribución de plantilla</h2>
+        <div id="squad-chart" class="chart-box"></div>
+    </div>
+
+    <div class="card">
+        <h2>Disciplina</h2>
+        <div id="discipline-chart" class="chart-box"></div>
     </div>
 </section>
 
@@ -63,10 +85,7 @@
 </section>
 
 <section class="card">
-    <div class="section-header">
-        <h2>Últimos partidos</h2>
-    </div>
-
+    <h2>Últimos partidos</h2>
     <div class="match-list">
         {% for match in recent_matches %}
             <a class="match-row" href="{% url 'matches:match-page-detail' match.pk %}">
@@ -86,10 +105,7 @@
 </section>
 
 <section class="card">
-    <div class="section-header">
-        <h2>Plantilla</h2>
-    </div>
-
+    <h2>Plantilla</h2>
     <table class="standings-table">
         <thead>
             <tr>
@@ -119,4 +135,39 @@
         </tbody>
     </table>
 </section>
+
+{{ form_chart|json_script:"form-chart-data" }}
+{{ goals_chart|json_script:"team-goals-chart-data" }}
+{{ squad_chart|json_script:"squad-chart-data" }}
+{{ discipline_chart|json_script:"discipline-chart-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+    const formFigure = JSON.parse(document.getElementById("form-chart-data").textContent);
+    const goalsFigure = JSON.parse(document.getElementById("team-goals-chart-data").textContent);
+    const squadFigure = JSON.parse(document.getElementById("squad-chart-data").textContent);
+    const disciplineFigure = JSON.parse(document.getElementById("discipline-chart-data").textContent);
+
+    Plotly.newPlot("form-chart", formFigure.data, formFigure.layout, {
+        responsive: true,
+        displayModeBar: false
+    });
+
+    Plotly.newPlot("goals-chart", goalsFigure.data, goalsFigure.layout, {
+        responsive: true,
+        displayModeBar: false
+    });
+
+    Plotly.newPlot("squad-chart", squadFigure.data, squadFigure.layout, {
+        responsive: true,
+        displayModeBar: false
+    });
+
+    Plotly.newPlot("discipline-chart", disciplineFigure.data, disciplineFigure.layout, {
+        responsive: true,
+        displayModeBar: false
+    });
+</script>
 {% endblock %}

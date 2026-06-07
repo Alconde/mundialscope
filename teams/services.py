@@ -1,7 +1,6 @@
 from django.db.models import Q
 from matches.models import Match, MatchEvent
 
-
 def get_team_matches_queryset(team):
     return Match.objects.select_related(
         "tournament",
@@ -74,9 +73,10 @@ def build_team_stats(team):
 
 
 def get_team_dashboard_kpis(team):
-    matches_qs = Match.objects.filter(
-        Q(home_team=team) | Q(away_team=team)
-    ).distinct()
+    mmatches_qs = Match.objects.filter(
+        Q(home_team=team) | Q(away_team=team),
+        status=Match.Status.FINISHED
+    ).distinct().order_by("-match_date")
 
     total_matches = matches_qs.count()
 
@@ -86,9 +86,44 @@ def get_team_dashboard_kpis(team):
     goals_for = 0
     goals_against = 0
 
-    recent_matches = matches_qs.order_by("-match_date")[:5]
+    recent_matches = list(matches_qs[:5])
+    recent_matches_chronological = list(reversed(recent_matches))
 
-    for match in matches_qs:
+    form_labels = []
+    form_points = []
+    goals_for_series = []
+    goals_against_series = []
+
+    for index, match in enumerate(recent_matches_chronological, start=1):
+        if match.home_team_id == team.id:
+            gf = match.home_score
+            ga = match.away_score
+            opponent = match.away_team.name
+        else:
+            gf = match.away_score
+            ga = match.home_score
+            opponent = match.home_team.name
+
+        goals_for += gf
+        goals_against += ga
+
+        if gf > ga:
+            wins += 1
+            points = 3
+        elif gf == ga:
+            draws += 1
+            points = 1
+        else:
+            losses += 1
+            points = 0
+
+        form_labels.append(f"J{index} vs {opponent}")
+        form_points.append(points)
+        goals_for_series.append(gf)
+        goals_against_series.append(ga)
+
+    all_matches = list(matches_qs)
+    for match in all_matches[5:]:
         if match.home_team_id == team.id:
             gf = match.home_score
             ga = match.away_score
@@ -140,4 +175,8 @@ def get_team_dashboard_kpis(team):
         "red_cards": red_cards,
         "goals_scored_events": goals_scored_events,
         "recent_matches": recent_matches,
+        "form_labels": form_labels,
+        "form_points": form_points,
+        "goals_for_series": goals_for_series,
+        "goals_against_series": goals_against_series,
     }
