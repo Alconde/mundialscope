@@ -19,6 +19,7 @@ class Team(models.Model):
     primary_color = models.CharField(max_length=7, blank=True)
     secondary_color = models.CharField(max_length=7, blank=True)
     is_active = models.BooleanField(default=True)
+    external_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
 
     class Meta:
         ordering = ["name"]

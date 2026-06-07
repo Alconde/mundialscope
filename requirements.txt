@@ -2,4 +2,6 @@ django
 djangorestframework
 psycopg[binary]
 python-decouple
-openai
+openai>=1.0.0
+requests
+python-dotenv

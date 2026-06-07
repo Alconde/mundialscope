@@ -21,6 +21,7 @@ class Player(models.Model):
     club = models.CharField(max_length=100, blank=True)
     market_value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     is_called_up = models.BooleanField(default=True)
+    external_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
 
     class Meta:
         ordering = ["last_name", "first_name"]

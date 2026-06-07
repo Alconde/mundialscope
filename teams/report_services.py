@@ -170,3 +170,13 @@ def generate_team_report(team):
         }
     )
     return report
+
+def safe_generate_team_ai_analysis(team_context):
+    try:
+        from teams.ai_report_services import generate_team_ai_analysis
+        return generate_team_ai_analysis(team_context)
+    except Exception:
+        return {
+            "summary": "Análisis IA no disponible.",
+            "details": "",
+        }

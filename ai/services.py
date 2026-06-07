@@ -1,5 +1,5 @@
 import json
-
+import os
 from django.conf import settings
 
 from openai import OpenAI
@@ -15,26 +15,28 @@ def get_openai_client():
     return OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
-def generate_structured_football_analysis(prompt, schema):
-    if not settings.ENABLE_AI_ANALYSIS:
-        raise AIServiceError("La IA está desactivada en la configuración.")
 
-    client = get_openai_client()
+
+
+def generate_structured_football_analysis(prompt):
+    try:
+        from openai import OpenAI
+    except ImportError:
+        raise RuntimeError(
+            "La librería 'openai' no está instalada. Ejecuta: pip install openai"
+        )
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "Falta la variable de entorno OPENAI_API_KEY."
+        )
+
+    client = OpenAI(api_key=api_key)
 
     response = client.responses.create(
-        model=settings.OPENAI_MODEL,
+        model="gpt-5.4",
         input=prompt,
-        text={
-            "format": {
-                "type": "json_schema",
-                "name": "football_analysis",
-                "schema": schema,
-                "strict": True,
-            }
-        }
     )
 
-    try:
-        return json.loads(response.output_text)
-    except Exception as exc:
-        raise AIServiceError(f"No se pudo parsear la respuesta de IA: {exc}")
+    return response.output_text

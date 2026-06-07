@@ -70,6 +70,8 @@ class Match(models.Model):
     )
     home_score = models.PositiveIntegerField(default=0)
     away_score = models.PositiveIntegerField(default=0)
+    external_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
+
 
     class Meta:
         ordering = ["match_date"]

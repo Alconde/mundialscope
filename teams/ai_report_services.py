@@ -25,23 +25,11 @@ Devuelve una lectura estructurada.
 """.strip()
 
 
-def generate_team_ai_analysis(team, summary_data):
-    schema = {
-        "type": "object",
-        "properties": {
-            "headline": {"type": "string"},
-            "summary": {"type": "string"},
-            "tactical_profile": {"type": "string"},
-            "priority_alerts": {
-                "type": "array",
-                "items": {"type": "string"},
-                "minItems": 3,
-                "maxItems": 5
-            }
-        },
-        "required": ["headline", "summary", "tactical_profile", "priority_alerts"],
-        "additionalProperties": False
-    }
-
-    prompt = build_team_ai_prompt(team, summary_data)
-    return generate_structured_football_analysis(prompt, schema)
+def generate_team_ai_analysis(team_context):
+    try:
+        return generate_structured_football_analysis(team_context)
+    except Exception as exc:
+        return {
+            "summary": "El análisis IA no está disponible en este entorno.",
+            "details": str(exc),
+        }
