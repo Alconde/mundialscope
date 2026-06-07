@@ -37,7 +37,8 @@
         <strong class="kpi-value">{{ goal_difference }}</strong>
     </div>
 </section>
-
+{% include "teams/partials/team_identity.html" %}
+{% include "teams/partials/team_featured_players.html" %}
 <section class="content-grid dashboard-grid">
     <div class="card">
         <h2>Forma reciente</h2>
@@ -103,7 +104,7 @@
         {% endfor %}
     </div>
 </section>
-
+{% include "teams/partials/team_squad_lines.html" %}
 <section class="card">
     <h2>Plantilla</h2>
     <table class="standings-table">

@@ -1,0 +1,57 @@
+<section class="content-grid">
+    <div class="card">
+        <h2>Porteros</h2>
+        <ul class="team-list">
+            {% for player in goalkeepers_list %}
+                <li>
+                    <strong>#{{ player.shirt_number|default:"-" }} {{ player.first_name }} {{ player.last_name }}</strong>
+                    <span>{{ player.club|default:"-" }}</span>
+                </li>
+            {% empty %}
+                <li><span>No hay porteros cargados.</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Defensas</h2>
+        <ul class="team-list">
+            {% for player in defenders_list %}
+                <li>
+                    <strong>#{{ player.shirt_number|default:"-" }} {{ player.first_name }} {{ player.last_name }}</strong>
+                    <span>{{ player.club|default:"-" }}</span>
+                </li>
+            {% empty %}
+                <li><span>No hay defensas cargados.</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Centrocampistas</h2>
+        <ul class="team-list">
+            {% for player in midfielders_list %}
+                <li>
+                    <strong>#{{ player.shirt_number|default:"-" }} {{ player.first_name }} {{ player.last_name }}</strong>
+                    <span>{{ player.club|default:"-" }}</span>
+                </li>
+            {% empty %}
+                <li><span>No hay centrocampistas cargados.</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Delanteros</h2>
+        <ul class="team-list">
+            {% for player in forwards_list %}
+                <li>
+                    <strong>#{{ player.shirt_number|default:"-" }} {{ player.first_name }} {{ player.last_name }}</strong>
+                    <span>{{ player.club|default:"-" }}</span>
+                </li>
+            {% empty %}
+                <li><span>No hay delanteros cargados.</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

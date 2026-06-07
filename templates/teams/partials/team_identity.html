@@ -1,0 +1,28 @@
+<section class="content-grid">
+    <div class="card">
+        <h2>Identidad de la selección</h2>
+        <ul class="team-list">
+            <li><strong>Nombre</strong><span>{{ team.name }}</span></li>
+            <li><strong>Código FIFA</strong><span>{{ team.fifa_code }}</span></li>
+            <li><strong>Confederación</strong><span>{{ team.confederation }}</span></li>
+            <li><strong>Grupo</strong><span>{{ team.group|default:"-" }}</span></li>
+            <li><strong>Ranking FIFA</strong><span>{{ team.fifa_ranking|default:"-" }}</span></li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Entrenador y staff</h2>
+        <ul class="team-list">
+            {% for item in staff_info %}
+                <li>
+                    <strong>{{ item.label }}</strong>
+                    <span>{{ item.value }}</span>
+                </li>
+            {% endfor %}
+            <li>
+                <strong>Staff ampliado</strong>
+                <span>Pendiente de carga en el modelo</span>
+            </li>
+        </ul>
+    </div>
+</section>

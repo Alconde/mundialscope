@@ -1,0 +1,13 @@
+<section class="card">
+    <h2>Jugadores destacados</h2>
+    <div class="team-grid">
+        {% for player in featured_players %}
+            <div class="team-card">
+                <h3>#{{ player.shirt_number|default:"-" }} · {{ player.first_name }} {{ player.last_name }}</h3>
+                <p>{{ player.get_position_display }} · {{ player.club|default:"Sin club cargado" }}</p>
+            </div>
+        {% empty %}
+            <p>No hay jugadores destacados disponibles.</p>
+        {% endfor %}
+    </div>
+</section>

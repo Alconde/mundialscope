@@ -1019,3 +1019,28 @@ a {
         min-height: 300px;
     }
 }
+.team-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.team-list li:last-child {
+    border-bottom: none;
+}
+
+.team-list strong {
+    font-weight: 600;
+}
+
+.team-list span {
+    color: #4b5563;
+    text-align: right;
+}
+
+.team-card h3 {
+    margin-bottom: 0.35rem;
+    font-size: 1rem;
+}

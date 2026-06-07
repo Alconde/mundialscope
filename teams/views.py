@@ -69,6 +69,19 @@ class TeamDetailPageView(DetailView):
         context["defenders"] = defenders
         context["midfielders"] = midfielders
         context["forwards"] = forwards
+        context["staff_info"] = [
+            {"label": "Seleccionador", "value": team.coach or "-"},
+            {"label": "Confederación", "value": team.confederation},
+            {"label": "Grupo", "value": team.group or "-"},
+            {"label": "Ranking FIFA", "value": team.fifa_ranking or "-"},
+        ]
+
+        context["goalkeepers_list"] = players.filter(position=team.players.model.Position.GOALKEEPER)
+        context["defenders_list"] = players.filter(position=team.players.model.Position.DEFENDER)
+        context["midfielders_list"] = players.filter(position=team.players.model.Position.MIDFIELDER)
+        context["forwards_list"] = players.filter(position=team.players.model.Position.FORWARD)
+
+        context["featured_players"] = players.order_by("position", "shirt_number")[:8]
 
         context.update(team_kpis)
 
