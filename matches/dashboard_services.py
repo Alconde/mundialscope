@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from django.db.models import Count, Q, Sum
+from django.db.models import Q, Sum
 from django.utils import timezone
 
 from matches.models import Match, Tournament
@@ -42,19 +42,12 @@ def get_dashboard_kpis(tournament):
     }
 
 
-def get_upcoming_matches(tournament, limit=8):
+def get_upcoming_matches(tournament, limit=5):
     now = timezone.now()
     return Match.objects.filter(
         tournament=tournament,
         match_date__gte=now,
     ).select_related("home_team", "away_team").order_by("match_date")[:limit]
-
-
-def get_recent_results(tournament, limit=8):
-    return Match.objects.filter(
-        tournament=tournament,
-        status=Match.Status.FINISHED,
-    ).select_related("home_team", "away_team").order_by("-match_date")[:limit]
 
 
 def build_group_tables(tournament):
@@ -133,7 +126,7 @@ def build_group_tables(tournament):
     return tables
 
 
-def get_team_rankings(tournament, limit=6):
+def get_team_rankings(tournament, limit=None):
     teams = Team.objects.filter(
         Q(home_matches__tournament=tournament) | Q(away_matches__tournament=tournament)
     ).distinct()
@@ -187,7 +180,58 @@ def get_team_rankings(tournament, limit=6):
         )
     )
 
-    return ranking_rows[:limit]
+    if limit:
+        return ranking_rows[:limit]
+    return ranking_rows
+
+
+def get_trend_rankings(top_teams, limit=4):
+    return {
+        "top_points": sorted(
+            top_teams,
+            key=lambda item: (-item["points"], -item["goal_difference"], -item["goals_for"], item["team"].name)
+        )[:limit],
+        "top_goals_for": sorted(
+            top_teams,
+            key=lambda item: (-item["goals_for"], -item["points"], item["team"].name)
+        )[:limit],
+        "top_goal_difference": sorted(
+            top_teams,
+            key=lambda item: (-item["goal_difference"], -item["points"], item["team"].name)
+        )[:limit],
+        "top_wins": sorted(
+            top_teams,
+            key=lambda item: (-item["wins"], -item["points"], item["team"].name)
+        )[:limit],
+    }
+
+
+def get_tournament_alerts(tournament, top_teams, upcoming_matches):
+    alerts = []
+
+    if top_teams:
+        leader = top_teams[0]
+        alerts.append(
+            f"{leader['team'].name} lidera el torneo con {leader['points']} puntos."
+        )
+
+        best_attack = max(top_teams, key=lambda item: item["goals_for"])
+        alerts.append(
+            f"{best_attack['team'].name} destaca en ataque con {best_attack['goals_for']} goles."
+        )
+
+        best_difference = max(top_teams, key=lambda item: item["goal_difference"])
+        alerts.append(
+            f"{best_difference['team'].name} tiene una diferencia de gol de {best_difference['goal_difference']}."
+        )
+
+    if upcoming_matches:
+        next_match = upcoming_matches[0]
+        alerts.append(
+            f"Próximo partido: {next_match.home_team.name} vs {next_match.away_team.name} el {next_match.match_date:%d/%m a las %H:%M}."
+        )
+
+    return alerts[:4]
 
 
 def get_dashboard_context():
@@ -198,16 +242,21 @@ def get_dashboard_context():
             "tournament": None,
             "kpis": {},
             "upcoming_matches": [],
-            "recent_results": [],
             "group_tables": [],
             "top_teams": [],
+            "trend_rankings": {},
+            "alerts": [],
         }
+
+    top_teams = get_team_rankings(tournament)
+    upcoming_matches = get_upcoming_matches(tournament)
 
     return {
         "tournament": tournament,
         "kpis": get_dashboard_kpis(tournament),
-        "upcoming_matches": get_upcoming_matches(tournament),
-        "recent_results": get_recent_results(tournament),
+        "upcoming_matches": upcoming_matches,
         "group_tables": build_group_tables(tournament),
-        "top_teams": get_team_rankings(tournament),
+        "top_teams": top_teams[:6],
+        "trend_rankings": get_trend_rankings(top_teams),
+        "alerts": get_tournament_alerts(tournament, top_teams, upcoming_matches),
     }

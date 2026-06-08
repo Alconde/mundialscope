@@ -73,7 +73,7 @@ def build_team_stats(team):
 
 
 def get_team_dashboard_kpis(team):
-    mmatches_qs = Match.objects.filter(
+    matches_qs = Match.objects.filter(
         Q(home_team=team) | Q(away_team=team),
         status=Match.Status.FINISHED
     ).distinct().order_by("-match_date")

@@ -6,141 +6,259 @@
 <section class="page-header">
     <h1>Dashboard del Mundial</h1>
     <p class="hero-text">
-        {% if active_tournament %}
-            {{ active_tournament.name }} {{ active_tournament.year }}
+        {% if tournament %}
+            Seguimiento operativo de {{ tournament.name }} {{ tournament.year }}
         {% else %}
             Vista general del torneo
         {% endif %}
     </p>
 </section>
 
-<section class="kpi-grid">
-    <div class="card kpi-card">
-        <span class="kpi-label">Selecciones</span>
-        <strong class="kpi-value">{{ total_teams }}</strong>
-    </div>
-    <div class="card kpi-card">
-        <span class="kpi-label">Jugadores</span>
-        <strong class="kpi-value">{{ total_players }}</strong>
-    </div>
-    <div class="card kpi-card">
-        <span class="kpi-label">Partidos</span>
-        <strong class="kpi-value">{{ total_matches }}</strong>
-    </div>
-    <div class="card kpi-card">
-        <span class="kpi-label">Finalizados</span>
-        <strong class="kpi-value">{{ finished_matches }}</strong>
-    </div>
-    <div class="card kpi-card">
-        <span class="kpi-label">Goles</span>
-        <strong class="kpi-value">{{ total_goals }}</strong>
-    </div>
-    <div class="card kpi-card">
-        <span class="kpi-label">Tarjetas</span>
-        <strong class="kpi-value">{{ total_cards }}</strong>
-    </div>
-</section>
+{% if tournament %}
+    <section class="dashboard-section">
+        <div class="section-header">
+            <h2>Estado del Mundial</h2>
+        </div>
 
-<section class="content-grid dashboard-grid">
-    <div class="card">
-        <h2>Selecciones con más gol</h2>
-        <div id="goals-chart" class="chart-box"></div>
-    </div>
+        <section class="kpi-grid">
+            <div class="card kpi-card">
+                <span class="kpi-label">Partidos</span>
+                <strong class="kpi-value">{{ kpis.total_matches }}</strong>
+            </div>
+            <div class="card kpi-card">
+                <span class="kpi-label">Finalizados</span>
+                <strong class="kpi-value">{{ kpis.finished_matches }}</strong>
+            </div>
+            <div class="card kpi-card">
+                <span class="kpi-label">En directo</span>
+                <strong class="kpi-value">{{ kpis.live_matches }}</strong>
+            </div>
+            <div class="card kpi-card">
+                <span class="kpi-label">Pendientes</span>
+                <strong class="kpi-value">{{ kpis.scheduled_matches }}</strong>
+            </div>
+            <div class="card kpi-card">
+                <span class="kpi-label">Goles</span>
+                <strong class="kpi-value">{{ kpis.total_goals }}</strong>
+            </div>
+            <div class="card kpi-card">
+                <span class="kpi-label">Selecciones</span>
+                <strong class="kpi-value">{{ kpis.total_teams }}</strong>
+            </div>
+        </section>
+    </section>
 
-    <div class="card">
-        <h2>Disciplina comparada</h2>
-        <div id="cards-chart" class="chart-box"></div>
-    </div>
-</section>
+    <section class="dashboard-section">
+        <div class="section-header">
+            <h2>Próximos 5 partidos</h2>
+        </div>
 
-<section class="content-grid">
-    <div class="card">
-        <h2>Selecciones con más gol</h2>
-        <table class="standings-table">
-            <thead>
-                <tr>
-                    <th>Selección</th>
-                    <th>Goles</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for team in top_scoring_teams %}
-                    <tr>
-                        <td><a href="{% url 'teams:team-detail' team.pk %}">{{ team.name }}</a></td>
-                        <td>{{ team.goal_events }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="2">Sin datos todavía.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="card">
-        <h2>Selecciones más disciplinadas</h2>
-        <table class="standings-table">
-            <thead>
-                <tr>
-                    <th>Selección</th>
-                    <th>Tarjetas</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for team in most_disciplined_teams %}
-                    <tr>
-                        <td><a href="{% url 'teams:team-detail' team.pk %}">{{ team.name }}</a></td>
-                        <td>{{ team.card_events }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="2">Sin datos todavía.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</section>
-
-<section class="card">
-    <h2>Últimos partidos</h2>
-    <div class="match-list">
-        {% for match in latest_matches %}
-            <a class="match-row" href="{% url 'matches:match-page-detail' match.pk %}">
-                <div>
-                    <strong>{{ match.home_team.name }}</strong> vs <strong>{{ match.away_team.name }}</strong>
-                    <p>{{ match.tournament.name }} · {{ match.get_stage_display }}</p>
+        <article class="card">
+            {% if upcoming_matches %}
+                <div class="match-list">
+                    {% for match in upcoming_matches %}
+                        <a class="match-row" href="{% url 'matches:match-page-detail' match.pk %}">
+                            <div>
+                                <strong>{{ match.home_team.name }}</strong> vs <strong>{{ match.away_team.name }}</strong>
+                                <p>{{ match.get_stage_display }}{% if match.group %} · Grupo {{ match.group }}{% endif %}</p>
+                            </div>
+                            <div class="match-meta">
+                                <strong>{{ match.match_date|date:"d M H:i" }}</strong>
+                                <span>{{ match.city|default:"Sede por confirmar" }}</span>
+                            </div>
+                        </a>
+                    {% endfor %}
                 </div>
-                <div class="match-meta">
-                    <strong>{{ match.home_score }} - {{ match.away_score }}</strong>
-                    <span>{{ match.match_date|date:"d M H:i" }}</span>
-                </div>
-            </a>
-        {% empty %}
-            <p>No hay partidos cargados.</p>
-        {% endfor %}
-    </div>
-</section>
+            {% else %}
+                <p>No hay próximos partidos disponibles.</p>
+            {% endif %}
+        </article>
+    </section>
 
-{{ goals_chart|json_script:"goals-chart-data" }}
-{{ cards_chart|json_script:"cards-chart-data" }}
-{% endblock %}
+    <section class="dashboard-section group-section">
+        <div class="section-header">
+            <h2>Grupos del Mundial</h2>
+        </div>
 
-{% block extra_js %}
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-<script>
-    const goalsFigure = JSON.parse(document.getElementById("goals-chart-data").textContent);
-    const cardsFigure = JSON.parse(document.getElementById("cards-chart-data").textContent);
+        {% if group_tables %}
+            <div class="groups-grid">
+                {% for table in group_tables %}
+                    <article class="card">
+                        <h3>Grupo {{ table.group }}</h3>
+                        <table class="standings-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipo</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DG</th>
+                                    <th>Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in table.rows %}
+                                    <tr>
+                                        <td><a href="{% url 'teams:team-detail' row.team.pk %}">{{ row.team.name }}</a></td>
+                                        <td>{{ row.played }}</td>
+                                        <td>{{ row.wins }}</td>
+                                        <td>{{ row.draws }}</td>
+                                        <td>{{ row.losses }}</td>
+                                        <td>{{ row.goals_for }}</td>
+                                        <td>{{ row.goals_against }}</td>
+                                        <td>{{ row.goal_difference }}</td>
+                                        <td><strong>{{ row.points }}</strong></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card">
+                <p>Todavía no hay partidos de fase de grupos finalizados para construir la clasificación.</p>
+            </div>
+        {% endif %}
+    </section>
 
-    Plotly.newPlot("goals-chart", goalsFigure.data, goalsFigure.layout, {
-        responsive: true,
-        displayModeBar: false
-    });
+    <section class="dashboard-section">
+        <div class="section-header">
+            <h2>Cómo va el Mundial</h2>
+        </div>
 
-    Plotly.newPlot("cards-chart", cardsFigure.data, cardsFigure.layout, {
-        responsive: true,
-        displayModeBar: false
-    });
-</script>
+        <div class="content-grid dashboard-trends-grid">
+            <article class="card">
+                <h3>Líderes por puntos</h3>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Selección</th>
+                            <th>Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in trend_rankings.top_points %}
+                            <tr>
+                                <td><a href="{% url 'teams:team-detail' row.team.pk %}">{{ row.team.name }}</a></td>
+                                <td><strong>{{ row.points }}</strong></td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="2">Sin datos.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="card">
+                <h3>Mejor ataque</h3>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Selección</th>
+                            <th>GF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in trend_rankings.top_goals_for %}
+                            <tr>
+                                <td><a href="{% url 'teams:team-detail' row.team.pk %}">{{ row.team.name }}</a></td>
+                                <td><strong>{{ row.goals_for }}</strong></td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="2">Sin datos.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="card">
+                <h3>Mejor diferencia</h3>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Selección</th>
+                            <th>DG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in trend_rankings.top_goal_difference %}
+                            <tr>
+                                <td><a href="{% url 'teams:team-detail' row.team.pk %}">{{ row.team.name }}</a></td>
+                                <td><strong>{{ row.goal_difference }}</strong></td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="2">Sin datos.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="card">
+                <h3>Más victorias</h3>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Selección</th>
+                            <th>PG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in trend_rankings.top_wins %}
+                            <tr>
+                                <td><a href="{% url 'teams:team-detail' row.team.pk %}">{{ row.team.name }}</a></td>
+                                <td><strong>{{ row.wins }}</strong></td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="2">Sin datos.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </article>
+        </div>
+    </section>
+
+    <section class="content-grid dashboard-secondary-grid">
+        <article class="card">
+            <div class="section-header">
+                <h2>Alertas del torneo</h2>
+            </div>
+
+            {% if alerts %}
+                <ul class="team-list">
+                    {% for alert in alerts %}
+                        <li><span>{{ alert }}</span></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Sin alertas relevantes por ahora.</p>
+            {% endif %}
+        </article>
+
+        <article class="card quick-links-card">
+            <div class="section-header">
+                <h2>Accesos rápidos</h2>
+            </div>
+
+            <div class="quick-links">
+                <a class="quick-link" href="{% url 'teams:team-list' %}">Ver selecciones</a>
+                <a class="quick-link" href="{% url 'teams:team-compare' %}">Comparar selecciones</a>
+                <a class="quick-link" href="{% url 'matches:match-page-list' %}">Ver partidos</a>
+                <a class="quick-link" href="{% url 'matches:group-standings' %}">Clasificación por grupos</a>
+                <a class="quick-link" href="{% url 'matches:tactical-dashboard' %}">Dashboard táctico</a>
+            </div>
+
+            <p class="helper-text">
+                Accede rápidamente a las vistas clave del torneo para seguir partidos, grupos y selecciones.
+            </p>
+        </article>
+    </section>
+{% else %}
+    <section class="card">
+        <p>No hay un Mundial activo configurado en este momento.</p>
+    </section>
+{% endif %}
 {% endblock %}
