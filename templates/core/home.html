@@ -75,66 +75,32 @@
         </article>
     </section>
 
-    <section class="dashboard-section group-section">
+    <section class="dashboard-section">
         <div class="section-header">
-            <h2>Grupos del Mundial</h2>
+            <h2>Explorar torneo</h2>
         </div>
 
-        {% if group_tables %}
-            <div class="groups-grid">
-                {% for table in group_tables %}
-                    <article class="card">
-                        <h3>Grupo {{ table.group }}</h3>
-                        <table class="standings-table">
-                            <thead>
-                                <tr>
-                                    <th>Equipo</th>
-                                    <th>PJ</th>
-                                    <th>PG</th>
-                                    <th>PE</th>
-                                    <th>PP</th>
-                                    <th>GF</th>
-                                    <th>GC</th>
-                                    <th>DG</th>
-                                    <th>Pts</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in table.rows %}
-                                    <tr>
-                                        <td>
-                                            <a class="team-link" href="{% url 'teams:team-detail' row.team.pk %}">
-                                                <img
-                                                    class="team-flag"
-                                                    src="https://cdn.fifa.com/assets/img/flags/3/{{ row.team.fifa_code|upper }}.png"
-                                                    alt="Bandera de {{ row.team.name }}"
-                                                    width="24"
-                                                    height="18"
-                                                    loading="lazy"
-                                                >
-                                                <span>{{ row.team.name }}</span>
-                                            </a>
-                                        </td>
-                                        <td>{{ row.played }}</td>
-                                        <td>{{ row.wins }}</td>
-                                        <td>{{ row.draws }}</td>
-                                        <td>{{ row.losses }}</td>
-                                        <td>{{ row.goals_for }}</td>
-                                        <td>{{ row.goals_against }}</td>
-                                        <td>{{ row.goal_difference }}</td>
-                                        <td><strong>{{ row.points }}</strong></td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="card">
-                <p>Todavía no hay partidos de fase de grupos finalizados para construir la clasificación.</p>
-            </div>
-        {% endif %}
+        <div class="content-grid">
+            <article class="card">
+                <h3>Grupos del Mundial</h3>
+                <p class="helper-text">
+                    Consulta todos los grupos del torneo y accede al detalle de cada selección desde una vista global.
+                </p>
+                <div class="quick-links">
+                    <a class="quick-link" href="{% url 'core:groups' %}">Ver grupos</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <h3>Selecciones</h3>
+                <p class="helper-text">
+                    Accede rápidamente al listado completo de equipos participantes y sus fichas.
+                </p>
+                <div class="quick-links">
+                    <a class="quick-link" href="{% url 'teams:team-list' %}">Ver selecciones</a>
+                </div>
+            </article>
+        </div>
     </section>
 
     <section class="dashboard-section">
@@ -256,6 +222,7 @@
             </div>
 
             <div class="quick-links">
+                <a class="quick-link" href="{% url 'core:groups' %}">Ver grupos del Mundial</a>
                 <a class="quick-link" href="{% url 'teams:team-list' %}">Ver selecciones</a>
                 <a class="quick-link" href="{% url 'teams:team-compare' %}">Comparar selecciones</a>
                 <a class="quick-link" href="{% url 'matches:match-page-list' %}">Ver partidos</a>

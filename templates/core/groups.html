@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Grupos del Mundial | MundialScope{% endblock %}
+
+{% block content %}
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"
+/>
+<section class="page-header">
+    <h1>Grupos del Mundial</h1>
+    <p class="hero-text">
+        Clasificación completa por grupo con acceso directo a cada selección.
+    </p>
+</section>
+
+<section class="dashboard-section">
+    <div class="content-grid">
+        <article class="card kpi-card">
+            <span class="kpi-label">Grupos</span>
+            <strong class="kpi-value">{{ groups_count }}</strong>
+        </article>
+        <article class="card kpi-card">
+            <span class="kpi-label">Selecciones</span>
+            <strong class="kpi-value">{{ teams_count }}</strong>
+        </article>
+    </div>
+</section>
+
+<section class="dashboard-section">
+    <div class="section-header">
+        <h2>Clasificación por grupos</h2>
+    </div>
+
+    <div class="groups-grid">
+        {% for group_letter, rows in groups.items %}
+            <article class="card group-card">
+                <div class="group-card-header">
+                    <div>
+                        <h3>Grupo {{ group_letter }}</h3>
+                        <p class="group-subtitle">{{ rows|length }} selecciones</p>
+                    </div>
+                </div>
+
+                <div class="group-table-wrap">
+                    <table class="standings-table fifa-group-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th class="team-col">Equipo</th>
+                                <th>PJ</th>
+                                <th>G</th>
+                                <th>E</th>
+                                <th>P</th>
+                                <th>GF</th>
+                                <th>GC</th>
+                                <th>DG</th>
+                                <th>Pts</th>
+                                <th>Resultados</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in rows %}
+                                <tr>
+                                    <td class="position-col">{{ forloop.counter }}</td>
+
+                                    <td class="team-col">
+                                        <div class="team-cell">
+                                            {% if row.flag_code %}
+                                                <span
+                                                    class="fi fi-{{ row.flag_code }} team-flag-icon"
+                                                    aria-label="Bandera de {{ row.team.name }}"
+                                                    title="{{ row.team.name }}"
+                                                    
+                                                ></span>
+                                            {% else %}
+                                                <span
+                                                    class="team-flag team-flag-fallback"
+                                                    title="Falta mapping de bandera para {{ row.team.name }} ({{ row.team.fifa_code }})"
+                                                ></span>
+                                            {% endif %}
+
+                                            <div class="team-meta">
+                                                <a href="{% url 'teams:team-detail' row.team.pk %}">
+                                                    {{ row.team.name }}
+                                                </a>
+                                                <small style="color:#94a3b8;">flag: {{ row.flag_code|default:"missing" }}</small>
+                                                <span>{{ row.team.fifa_code }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>{{ row.stats.played }}</td>
+                                    <td>{{ row.stats.wins }}</td>
+                                    <td>{{ row.stats.draws }}</td>
+                                    <td>{{ row.stats.losses }}</td>
+                                    <td>{{ row.stats.goals_for }}</td>
+                                    <td>{{ row.stats.goals_against }}</td>
+                                    <td>
+                                        {% if row.stats.goal_difference > 0 %}
+                                            +{{ row.stats.goal_difference }}
+                                        {% else %}
+                                            {{ row.stats.goal_difference }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="points-col"><strong>{{ row.stats.points }}</strong></td>
+                                    <td>
+                                        <div class="form-dots">
+                                            {% if row.stats.form %}
+                                                {% for result in row.stats.form %}
+                                                    {% if result == "W" %}
+                                                        <span class="form-dot form-win" title="Victoria"></span>
+                                                    {% elif result == "D" %}
+                                                        <span class="form-dot form-draw" title="Empate"></span>
+                                                    {% elif result == "L" %}
+                                                        <span class="form-dot form-loss" title="Derrota"></span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="form-empty">- - - - -</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        {% empty %}
+            <article class="card">
+                <p>No hay equipos con grupo asignado.</p>
+            </article>
+        {% endfor %}
+    </div>
+
+    <div class="group-legend">
+        <p>
+            <strong>PJ</strong> = Partidos jugados ·
+            <strong>G</strong> = Victorias ·
+            <strong>E</strong> = Empates ·
+            <strong>P</strong> = Derrotas ·
+            <strong>GF</strong> = Goles a favor ·
+            <strong>GC</strong> = Goles en contra ·
+            <strong>DG</strong> = Diferencia de goles ·
+            <strong>Pts</strong> = Puntos
+        </p>
+        <p>
+            <span class="legend-item"><span class="form-dot form-win"></span> Victoria</span>
+            <span class="legend-item"><span class="form-dot form-draw"></span> Empate</span>
+            <span class="legend-item"><span class="form-dot form-loss"></span> Derrota</span>
+        </p>
+    </div>
+</section>
+
+<style>
+    .groups-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .group-card {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .group-card-header {
+        padding: 1rem 1.25rem 0.5rem;
+        border-bottom: 1px solid var(--color-border, #e5e7eb);
+    }
+
+    .group-card-header h3 {
+        margin: 0;
+    }
+
+    .group-subtitle {
+        margin: 0.25rem 0 0;
+        font-size: 0.85rem;
+        color: var(--color-text-muted, #6b7280);
+    }
+
+    .group-table-wrap {
+        overflow-x: auto;
+        padding: 0.5rem 1.25rem 1rem;
+    }
+
+    .fifa-group-table {
+        width: 100%;
+        min-width: 980px;
+    }
+
+    .fifa-group-table th,
+    .fifa-group-table td {
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .fifa-group-table th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--color-text-muted, #6b7280);
+    }
+
+    .fifa-group-table th.team-col,
+    .fifa-group-table td.team-col {
+        text-align: left;
+        min-width: 260px;
+    }
+
+    .position-col {
+        width: 42px;
+        font-weight: 700;
+    }
+
+    .points-col {
+        font-weight: 700;
+    }
+
+    .team-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .team-flag {
+        width: 28px;
+        height: 20px;
+        object-fit: cover;
+        border-radius: 3px;
+        border: 1px solid #d1d5db;
+        background: #f3f4f6;
+        flex-shrink: 0;
+    }
+
+    .team-flag-fallback {
+        display: inline-block;
+        background: linear-gradient(135deg, #e5e7eb, #cbd5e1);
+    }
+
+    .team-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.12rem;
+    }
+
+    .team-meta a {
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .team-meta span {
+        font-size: 0.78rem;
+        color: var(--color-text-muted, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .form-dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        min-width: 120px;
+    }
+
+    .form-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+    }
+
+    .form-win {
+        background: #16a34a;
+    }
+
+    .form-draw {
+        background: #9ca3af;
+    }
+
+    .form-loss {
+        background: #dc2626;
+    }
+
+    .form-empty {
+        color: #9ca3af;
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+    }
+
+    .group-legend {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: var(--color-text-muted, #6b7280);
+    }
+
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-right: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .group-card-header {
+            padding: 0.9rem 1rem 0.4rem;
+        }
+
+        .group-table-wrap {
+            padding: 0.5rem 1rem 1rem;
+        }
+    }
+</style>
+{% endblock %}

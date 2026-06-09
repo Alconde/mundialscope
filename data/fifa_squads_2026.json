@@ -1,0 +1,218 @@
+{
+  "teams": [
+    {
+      "team_name": "Cabo Verde",
+      "fifa_code": "CPV",
+      "players": [
+        {
+          "name": "Vozinha",
+          "position": "GK",
+          "shirt_name": "VOZINHA",
+          "date_of_birth": "1986-06-03",
+          "club": "GD Chaves",
+          "height_cm": 189
+        },
+        {
+          "name": "Márcio Rosa",
+          "position": "GK",
+          "shirt_name": "MARCIO",
+          "date_of_birth": "1997-02-23",
+          "club": "PFC Montana",
+          "height_cm": 186
+        },
+        {
+          "name": "CJ dos Santos",
+          "position": "GK",
+          "shirt_name": "DOS SANTOS",
+          "date_of_birth": "2000-08-24",
+          "club": "San Diego FC",
+          "height_cm": 189
+        },
+        {
+          "name": "Stopira",
+          "position": "DF",
+          "shirt_name": "STOPIRA",
+          "date_of_birth": "1988-05-20",
+          "club": "SCU Torreense",
+          "height_cm": 178
+        },
+        {
+          "name": "Diney Borges",
+          "position": "DF",
+          "shirt_name": "BORGES",
+          "date_of_birth": "1995-01-17",
+          "club": "Al Bataeh Club",
+          "height_cm": 185
+        },
+        {
+          "name": "Pico Lopes",
+          "position": "DF",
+          "shirt_name": "LOPES",
+          "date_of_birth": "1992-06-17",
+          "club": "Shamrock Rovers FC",
+          "height_cm": 186
+        },
+        {
+          "name": "Logan Costa",
+          "position": "DF",
+          "shirt_name": "COSTA",
+          "date_of_birth": "2001-04-01",
+          "club": "Villarreal CF",
+          "height_cm": 190
+        },
+        {
+          "name": "Sidny Lopes Cabral",
+          "position": "DF",
+          "shirt_name": "LOPES CABRAL",
+          "date_of_birth": "2002-09-18",
+          "club": "SL Benfica",
+          "height_cm": 176
+        },
+        {
+          "name": "Steven Moreira",
+          "position": "DF",
+          "shirt_name": "MOREIRA",
+          "date_of_birth": "1994-08-13",
+          "club": "Columbus Crew",
+          "height_cm": 178
+        },
+        {
+          "name": "Wagner Pina",
+          "position": "DF",
+          "shirt_name": "WAGNER P.",
+          "date_of_birth": "2002-11-03",
+          "club": "Trabzonspor",
+          "height_cm": 180
+        },
+        {
+          "name": "Kelvin Pires",
+          "position": "DF",
+          "shirt_name": "KELVIN",
+          "date_of_birth": "2000-06-05",
+          "club": "SJK",
+          "height_cm": 193
+        },
+        {
+          "name": "Kevin Pina",
+          "position": "MF",
+          "shirt_name": "KEVIN L.",
+          "date_of_birth": "1997-01-27",
+          "club": "FC Krasnodar",
+          "height_cm": 177
+        },
+        {
+          "name": "Jovane Cabral",
+          "position": "MF",
+          "shirt_name": "JOVANE",
+          "date_of_birth": "1998-06-14",
+          "club": "CF Estrela Da Amadora",
+          "height_cm": 174
+        },
+        {
+          "name": "João Paulo",
+          "position": "MF",
+          "shirt_name": "JOÃO PAULO",
+          "date_of_birth": "1998-05-26",
+          "club": "FC FCSB",
+          "height_cm": 180
+        },
+        {
+          "name": "Jamiro Monteiro",
+          "position": "MF",
+          "shirt_name": "MONTEIRO",
+          "date_of_birth": "1993-11-23",
+          "club": "PEC Zwolle",
+          "height_cm": 175
+        },
+        {
+          "name": "Deroy Duarte",
+          "position": "MF",
+          "shirt_name": "D. DUARTE",
+          "date_of_birth": "1999-07-04",
+          "club": "PFC Ludogorets Razgrad",
+          "height_cm": 177
+        },
+        {
+          "name": "Laros Duarte",
+          "position": "MF",
+          "shirt_name": "L. DUARTE",
+          "date_of_birth": "1997-02-28",
+          "club": "Puskás Akadémia FC",
+          "height_cm": 180
+        },
+        {
+          "name": "Yannick Semedo",
+          "position": "MF",
+          "shirt_name": "Y. SEMEDO",
+          "date_of_birth": "1995-12-29",
+          "club": "SC Farense",
+          "height_cm": 176
+        },
+        {
+          "name": "Willy Semedo",
+          "position": "MF",
+          "shirt_name": "SEMEDO",
+          "date_of_birth": "1994-04-27",
+          "club": "AC Omonia",
+          "height_cm": 185
+        },
+        {
+          "name": "Telmo Arcanjo",
+          "position": "MF",
+          "shirt_name": "ARCANJO",
+          "date_of_birth": "2001-06-21",
+          "club": "Vitória SC",
+          "height_cm": 180
+        },
+        {
+          "name": "Gilson Benchimol",
+          "position": "FW",
+          "shirt_name": "BENCHIMOL",
+          "date_of_birth": "2001-12-29",
+          "club": "FC Akron Tolyatti",
+          "height_cm": 187
+        },
+        {
+          "name": "Garry Rodrigues",
+          "position": "MF",
+          "shirt_name": "RODRIGUES",
+          "date_of_birth": "1990-11-27",
+          "club": "Apollon Limassol",
+          "height_cm": 173
+        },
+        {
+          "name": "Dailon Livramento",
+          "position": "FW",
+          "shirt_name": "LIVRAMENTO",
+          "date_of_birth": "2001-05-04",
+          "club": "Casa Pia AC",
+          "height_cm": 185
+        },
+        {
+          "name": "Ryan Mendes",
+          "position": "FW",
+          "shirt_name": "RYAN",
+          "date_of_birth": "1990-01-08",
+          "club": "Iğdır FK",
+          "height_cm": 178
+        },
+        {
+          "name": "Nuno da Costa",
+          "position": "MF",
+          "shirt_name": "DA COSTA",
+          "date_of_birth": "1991-02-10",
+          "club": "Başakşehir FK",
+          "height_cm": 182
+        },
+        {
+          "name": "Hélio Varela",
+          "position": "MF",
+          "shirt_name": "HÉLIO",
+          "date_of_birth": "2002-05-03",
+          "club": "Maccabi Tel-Aviv FC",
+          "height_cm": 176
+        }
+      ]
+    }
+  ]
+}
