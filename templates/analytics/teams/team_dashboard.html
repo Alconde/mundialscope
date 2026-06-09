@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>Dashboard de selecciones</h1>
+    <p>Vista general de rendimiento y clasificación de equipos.</p>
+
+    <div class="mb-4">
+        <a class="btn btn-outline-primary" href="{% url 'analytics:team-compare' %}">Comparar selecciones</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Selección</th>
+                        <th>Grupo</th>
+                        <th>PJ</th>
+                        <th>G</th>
+                        <th>E</th>
+                        <th>P</th>
+                        <th>GF</th>
+                        <th>GC</th>
+                        <th>DG</th>
+                        <th>Pts</th>
+                        <th>Convocados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in team_rows %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'analytics:team-detail' row.team.pk %}">
+                                {{ row.team.name }}
+                            </a>
+                        </td>
+                        <td>{{ row.team.group }}</td>
+                        <td>{{ row.played }}</td>
+                        <td>{{ row.wins }}</td>
+                        <td>{{ row.draws }}</td>
+                        <td>{{ row.losses }}</td>
+                        <td>{{ row.goals_for }}</td>
+                        <td>{{ row.goals_against }}</td>
+                        <td>{{ row.goal_difference }}</td>
+                        <td>{{ row.points }}</td>
+                        <td>{{ row.called_up_count }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11">No hay selecciones disponibles.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

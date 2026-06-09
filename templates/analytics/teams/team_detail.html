@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>{{ team.name }}</h1>
+    <p>Grupo {{ team.group }} · Código FIFA: {{ team.fifa_code }}</p>
+
+    <div class="mb-4">
+        <a class="btn btn-outline-primary" href="{% url 'analytics:team-compare' %}?team_a={{ team.pk }}">Comparar esta selección</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-2"><div class="card card-body"><strong>PJ</strong><br>{{ standings.played }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>G</strong><br>{{ standings.wins }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>E</strong><br>{{ standings.draws }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>P</strong><br>{{ standings.losses }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>GF</strong><br>{{ standings.goals_for }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>GC</strong><br>{{ standings.goals_against }}</div></div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Top jugadores por minutos</div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jugador</th>
+                                <th>Minutos</th>
+                                <th>Goles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in top_players_by_minutes %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'analytics:player-detail' row.player.pk %}">
+                                        {{ row.full_name }}
+                                    </a>
+                                </td>
+                                <td>{{ row.minutes_played }}</td>
+                                <td>{{ row.goals }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Top jugadores por goles</div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jugador</th>
+                                <th>Goles</th>
+                                <th>Asistencias</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in top_players_by_goals %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'analytics:player-detail' row.player.pk %}">
+                                        {{ row.full_name }}
+                                    </a>
+                                </td>
+                                <td>{{ row.goals }}</td>
+                                <td>{{ row.assists }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

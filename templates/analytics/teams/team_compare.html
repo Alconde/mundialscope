@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>Comparador de selecciones</h1>
+    <p>Compara rápidamente métricas básicas entre dos equipos.</p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    {{ form.team_a.label_tag }}
+                    {{ form.team_a }}
+                </div>
+                <div class="col-md-5">
+                    {{ form.team_b.label_tag }}
+                    {{ form.team_b }}
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">Comparar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if comparison %}
+    <div class="card">
+        <div class="card-header">Resultado</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>{{ comparison.team_a.team.name }}</th>
+                        <th>{{ comparison.team_b.team.name }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>PJ</td><td>{{ comparison.team_a.played }}</td><td>{{ comparison.team_b.played }}</td></tr>
+                    <tr><td>Victorias</td><td>{{ comparison.team_a.wins }}</td><td>{{ comparison.team_b.wins }}</td></tr>
+                    <tr><td>Empates</td><td>{{ comparison.team_a.draws }}</td><td>{{ comparison.team_b.draws }}</td></tr>
+                    <tr><td>Derrotas</td><td>{{ comparison.team_a.losses }}</td><td>{{ comparison.team_b.losses }}</td></tr>
+                    <tr><td>GF</td><td>{{ comparison.team_a.goals_for }}</td><td>{{ comparison.team_b.goals_for }}</td></tr>
+                    <tr><td>GC</td><td>{{ comparison.team_a.goals_against }}</td><td>{{ comparison.team_b.goals_against }}</td></tr>
+                    <tr><td>DG</td><td>{{ comparison.team_a.goal_difference }}</td><td>{{ comparison.team_b.goal_difference }}</td></tr>
+                    <tr><td>Puntos</td><td>{{ comparison.team_a.points }}</td><td>{{ comparison.team_b.points }}</td></tr>
+                    <tr><td>Convocados</td><td>{{ comparison.team_a.squad_size }}</td><td>{{ comparison.team_b.squad_size }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

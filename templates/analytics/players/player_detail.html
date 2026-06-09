@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>{{ full_name }}</h1>
+    <p>{{ player.team.name }} · {{ player.position }} · {{ player.club }}</p>
+
+    <div class="mb-4">
+        <a class="btn btn-outline-primary" href="{% url 'analytics:player-compare' %}?player_a={{ player.pk }}">Comparar este jugador</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-2"><div class="card card-body"><strong>Minutos</strong><br>{{ kpis.minutes_played }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Partidos</strong><br>{{ kpis.matches_played }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Goles</strong><br>{{ kpis.goals }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Asistencias</strong><br>{{ kpis.assists }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Amarillas</strong><br>{{ kpis.yellow_cards }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Rojas</strong><br>{{ kpis.red_cards }}</div></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Contexto en su selección</div>
+        <div class="card-body">
+            <ul>
+                <li>Ranking en minutos: {{ context.minutes_rank_in_team }}</li>
+                <li>Ranking en goles: {{ context.goals_rank_in_team }}</li>
+                <li>Contribución de gol por 90: {{ kpis.goal_contributions_per90 }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

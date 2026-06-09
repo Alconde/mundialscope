@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>Analytics del Mundial</h1>
+    <p>Resumen global de selecciones, jugadores y rendimiento del torneo.</p>
+
+    <div class="row g-3 my-4">
+        <div class="col-md-2"><div class="card card-body"><strong>Selecciones</strong><br>{{ kpis.teams_total }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Jugadores</strong><br>{{ kpis.players_total }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Partidos</strong><br>{{ kpis.matches_total }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Finalizados</strong><br>{{ kpis.finished_matches_total }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Goles</strong><br>{{ kpis.goals_total }}</div></div>
+        <div class="col-md-2"><div class="card card-body"><strong>Goles/partido</strong><br>{{ kpis.goals_per_match }}</div></div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Top selecciones</div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Selección</th>
+                                <th>Pts</th>
+                                <th>DG</th>
+                                <th>GF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in top_teams %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'analytics:team-detail' row.team.pk %}">
+                                        {{ row.team.name }}
+                                    </a>
+                                </td>
+                                <td>{{ row.points }}</td>
+                                <td>{{ row.goal_difference }}</td>
+                                <td>{{ row.goals_for }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Top goleadores</div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jugador</th>
+                                <th>Selección</th>
+                                <th>Goles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in top_scorers %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'analytics:player-detail' row.player.pk %}">
+                                        {{ row.full_name }}
+                                    </a>
+                                </td>
+                                <td>{{ row.team.name }}</td>
+                                <td>{{ row.goals }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

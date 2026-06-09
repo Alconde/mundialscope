@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>Dashboard de jugadores</h1>
+    <p>Explora jugadores convocados y sus métricas principales.</p>
+
+    <div class="mb-4">
+        <a class="btn btn-outline-primary" href="{% url 'analytics:player-compare' %}">Comparar jugadores</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Jugador</th>
+                        <th>Selección</th>
+                        <th>Posición</th>
+                        <th>Club</th>
+                        <th>Dorsal</th>
+                        <th>Minutos</th>
+                        <th>Partidos</th>
+                        <th>Goles</th>
+                        <th>Asistencias</th>
+                        <th>G+A/90</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in player_rows %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'analytics:player-detail' row.player.pk %}">
+                                {{ row.full_name }}
+                            </a>
+                        </td>
+                        <td>{{ row.team.name }}</td>
+                        <td>{{ row.position }}</td>
+                        <td>{{ row.club }}</td>
+                        <td>{{ row.shirt_number }}</td>
+                        <td>{{ row.minutes_played }}</td>
+                        <td>{{ row.matches_played }}</td>
+                        <td>{{ row.goals }}</td>
+                        <td>{{ row.assists }}</td>
+                        <td>{{ row.goal_contributions_per90 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10">No hay jugadores disponibles.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'analytics',
     "chat",
     "datahub",
+    "analytics",
 ]
 
 MIDDLEWARE = [

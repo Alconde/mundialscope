@@ -133,7 +133,7 @@ TEAM_NAME_TO_FLAG_CODE = {
     "uzbekistan": "uz",
     "venezuela": "ve",
     "wales": "gb-wls",
-}
+}   
 
 
 def get_flag_code(team):

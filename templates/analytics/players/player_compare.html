@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>Comparador de jugadores</h1>
+    <p>Contrasta perfiles internacionales de forma rápida.</p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    {{ form.player_a.label_tag }}
+                    {{ form.player_a }}
+                </div>
+                <div class="col-md-5">
+                    {{ form.player_b.label_tag }}
+                    {{ form.player_b }}
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">Comparar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if comparison %}
+    <div class="card">
+        <div class="card-header">Resultado</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>{{ comparison.player_a.full_name }}</th>
+                        <th>{{ comparison.player_b.full_name }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Selección</td><td>{{ comparison.player_a.player.team.name }}</td><td>{{ comparison.player_b.player.team.name }}</td></tr>
+                    <tr><td>Posición</td><td>{{ comparison.player_a.player.position }}</td><td>{{ comparison.player_b.player.position }}</td></tr>
+                    <tr><td>Club</td><td>{{ comparison.player_a.player.club }}</td><td>{{ comparison.player_b.player.club }}</td></tr>
+                    <tr><td>Minutos</td><td>{{ comparison.player_a.minutes_played }}</td><td>{{ comparison.player_b.minutes_played }}</td></tr>
+                    <tr><td>Partidos</td><td>{{ comparison.player_a.matches_played }}</td><td>{{ comparison.player_b.matches_played }}</td></tr>
+                    <tr><td>Goles</td><td>{{ comparison.player_a.goals }}</td><td>{{ comparison.player_b.goals }}</td></tr>
+                    <tr><td>Asistencias</td><td>{{ comparison.player_a.assists }}</td><td>{{ comparison.player_b.assists }}</td></tr>
+                    <tr><td>G+A/90</td><td>{{ comparison.player_a.goal_contributions_per90 }}</td><td>{{ comparison.player_b.goal_contributions_per90 }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
